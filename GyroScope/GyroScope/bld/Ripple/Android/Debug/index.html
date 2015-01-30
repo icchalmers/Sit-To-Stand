@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>GyroScope</title>
+
+    <!-- GyroScope references -->
+    <link href="css/index.css" rel="stylesheet" />
+    <script>
+        function init() {
+            var dataContainerOrientation = document.getElementById('dataContainerOrientation');
+            var dataContainerMotion = document.getElementById('dataContainerMotion');
+
+            if (window.DeviceOrientationEvent) {
+                window.addEventListener('deviceorientation', function (event) {
+                    var alpha = (Math.round(event.alpha*100)/100).toFixed(2);
+                    var beta = (Math.round(event.beta*100)/100).toFixed(2);
+                    var gamma = (Math.round(event.gamma*100)/100).toFixed(2);
+
+                    if (alpha != null || beta != null || gamma != null)
+                        dataContainerOrientation.innerHTML = 'alpha: ' + alpha + '<br/>beta: ' + beta + '<br/>gamma: ' + gamma;
+                }, false);
+            }
+
+            if (window.DeviceMotionEvent) {
+                window.addEventListener('devicemotion', function (event) {
+                    var x = (Math.round(event.acceleration.x*100)/100).toFixed(2);
+                    var y = (Math.round(event.acceleration.y*100)/100).toFixed(2);
+                    var z = (Math.round(event.acceleration.z*100)/100).toFixed(2);
+                    var r = event.rotationRate;
+
+                    var html = 'Acceleration:<br />';
+                    html += 'x: ' + x + '<br />y: ' + y + '<br/>z: ' + z + '<br />';
+                    html += 'Rotation rate:<br />';
+                    if (r != null) html += 'alpha: ' + (Math.round(r.alpha*100)/100).toFixed(2) + '<br />beta: ' + (Math.round(r.beta*100)/100).toFixed(2) + '<br/>gamma: ' + (Math.round(r.gamma*100)/100).toFixed(2) + '<br />';
+                    dataContainerMotion.innerHTML = html;
+                });
+            }
+        }
+    </script>
+</head>
+<body onload="init()">
+    <div id="dataContainerOrientation">
+        No device orientation data
+    </div>
+    <div id="dataContainerMotion">
+        No device motion data
+    </div>
+
+    <!-- Cordova reference, this is added to your app when it's built. -->
+    <script src="cordova.js"></script>
+    <script src="scripts/platformOverrides.js"></script>
+
+    <script src="scripts/index.js"></script>
+</body>
+</html>
