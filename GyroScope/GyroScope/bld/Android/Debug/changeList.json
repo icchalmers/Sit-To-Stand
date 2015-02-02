@@ -55,13 +55,14 @@
     "res\\screens\\ios\\screen-ipad-portrait.png",
     "res\\screens\\android\\screen-xhdpi-landscape.png",
     "res\\icons\\windows\\Square44x44Logo.scale-240.png",
-    "res\\screens\\android\\screen-mdpi-portrait.png"
+    "res\\screens\\android\\screen-mdpi-portrait.png",
+    "scripts\\motion.js"
   ],
   "deletedFilesIos": [],
   "addedPluginsIos": [],
   "deletedPluginsIos": [],
   "changedFiles": [
-    "index.html"
+    "scripts\\motion.js"
   ],
   "deletedFiles": [],
   "addedPlugins": [],
