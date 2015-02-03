@@ -65,11 +65,6 @@ function getReading() {
             var ySum = 0;
             var zSum = 0;
             var arrLength = xArray.length;
-            //for (var i = 0; i < xArray.length; i++) {
-            //    xSum += parseFloat(xArray[i]);
-            //    ySum += parseFloat(yArray[i]);
-            //    zSum += parseFloat(zArray[i]);
-            //}
             while (xArray.length > 0) {
                 xSum += parseFloat(xArray.pop());
                 ySum += parseFloat(yArray.pop());
@@ -79,11 +74,6 @@ function getReading() {
             html += 'x: ' + (Math.round(xSum / arrLength * 100) / 100).toFixed(2) + '<br />y: ' + (Math.round(ySum / arrLength * 100) / 100).toFixed(2) + '<br/>z: ' + (Math.round(zSum / arrLength * 100) / 100).toFixed(2) + '<br />';
             //html += 'Rotation rate:<br />';
             dataContainerMotion.innerHTML = html;
-            //while (xArray.length > 0) {
-            //    xArray.pop();
-            //    yArray.pop();
-            //    zArray.pop();
-            //}
         }
     }, 100);
 }

@@ -62,7 +62,8 @@
   "addedPluginsIos": [],
   "deletedPluginsIos": [],
   "changedFiles": [
-    "scripts\\motion.js"
+    "scripts\\motion.js",
+    "config.xml"
   ],
   "deletedFiles": [],
   "addedPlugins": [],
