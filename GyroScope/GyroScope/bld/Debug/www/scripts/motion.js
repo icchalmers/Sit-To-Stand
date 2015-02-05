@@ -17,14 +17,20 @@ function init() {
 function orient(){
     if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', function (event) {
-            var alpha = (Math.round(event.alpha * 100) / 100).toFixed(2);
-            var beta = (Math.round(event.beta * 100) / 100).toFixed(2);
-            var gamma = (Math.round(event.gamma * 100) / 100).toFixed(2);
+            if (event.alpha != null){
+                var alpha = (Math.round(event.alpha * 100) / 100).toFixed(2);
+            }
+            if (event.beta != null) {
+                var beta = (Math.round(event.beta * 100) / 100).toFixed(2);
+            }
+            if (event.gamma != null) {
+                var gamma = (Math.round(event.gamma * 100) / 100).toFixed(2);
+            }
 
-            event.target.removeEventListener(event.type, arguments.callee);
+            //event.target.removeEventListener(event.type, arguments.callee);
 
-            //if (alpha != null || beta != null || gamma != null)
-               // dataContainerOrientation.innerHTML = 'alpha: ' + alpha + '<br/>beta: ' + beta + '<br/>gamma: ' + gamma;
+            if (alpha != null || beta != null || gamma != null)
+                dataContainerOrientation.innerHTML = 'alpha: ' + alpha + '<br/>beta: ' + beta + '<br/>gamma: ' + gamma;
         }, false);
     }
 }
