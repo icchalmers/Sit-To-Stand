@@ -23,8 +23,8 @@ function orient(){
 
             event.target.removeEventListener(event.type, arguments.callee);
 
-            if (alpha != null || beta != null || gamma != null)
-                dataContainerOrientation.innerHTML = 'alpha: ' + alpha + '<br/>beta: ' + beta + '<br/>gamma: ' + gamma;
+            //if (alpha != null || beta != null || gamma != null)
+               // dataContainerOrientation.innerHTML = 'alpha: ' + alpha + '<br/>beta: ' + beta + '<br/>gamma: ' + gamma;
         }, false);
     }
 }
@@ -52,7 +52,7 @@ function motion(){
 
 function updateCount() {
   counter++;
-    dataContainerCount.innerHTML = counter;
+    //dataContainerCount.innerHTML = counter;
 }
 
 function getReading() {
@@ -70,8 +70,8 @@ function getReading() {
                 ySum += parseFloat(yArray.pop());
                 zSum += parseFloat(zArray.pop());
             }
-            var html = 'Acceleration:<br />';
-            html += 'x: ' + (Math.round(xSum / arrLength * 100) / 100).toFixed(2) + '<br />y: ' + (Math.round(ySum / arrLength * 100) / 100).toFixed(2) + '<br/>z: ' + (Math.round(zSum / arrLength * 100) / 100).toFixed(2) + '<br />';
+            var html='';// = 'Acceleration:<br /><br />';
+            html += 'x: ' + (Math.round(xSum / arrLength * 100) / 100).toFixed(2) + '&nbsp;&nbsp;&nbsp;&nbsp;y: ' + (Math.round(ySum / arrLength * 100) / 100).toFixed(2) + '&nbsp;&nbsp;&nbsp;&nbsp;z: ' + (Math.round(zSum / arrLength * 100) / 100).toFixed(2) + '<br />';
             //html += 'Rotation rate:<br />';
             dataContainerMotion.innerHTML = html;
         }
