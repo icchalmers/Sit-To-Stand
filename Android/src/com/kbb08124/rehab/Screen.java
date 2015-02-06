@@ -15,7 +15,7 @@ public class Screen extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_screen);
 		WebView myWebView = (WebView) findViewById(R.id.webView);
-		myWebView.loadUrl("http://www.example.com");
+		myWebView.loadUrl("https://devweb2014.cis.strath.ac.uk/~kbb08124/");
 		WebSettings webSettings = myWebView.getSettings();
 		webSettings.setJavaScriptEnabled(true);
 		myWebView.addJavascriptInterface(
