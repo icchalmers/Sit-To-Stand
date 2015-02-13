@@ -61,5 +61,5 @@ function getReading() {
             html += 'a: ' + (Math.round(aSum / aLength * 100) / 100).toFixed(2) + '&nbsp;&nbsp;&nbsp;&nbsp;y: ' + (Math.round(bSum / bLength * 100) / 100).toFixed(2) + '&nbsp;&nbsp;&nbsp;&nbsp;z: ' + (Math.round(gSum / gLength * 100) / 100).toFixed(2) + '<br />';
             dataContainerOrientation.innerHTML = html;
         }
-    }, 1000);
+    }, 100);
 }
