@@ -4,6 +4,14 @@ var alpha = [];
 var beta = [];
 var gamma = [];
 
+function convert(type, angle) {
+    if (type == 'deg') {
+        return angle * (180 / Math.PI);
+    }
+    else {
+        return angle * (Math.PI / 180);
+    }
+}
 function init() {
     dataContainerOrientation = document.getElementById('dataContainerOrientation');
 }
@@ -38,28 +46,39 @@ function getReading() {
         beta = [];
         gamma = [];
 
-        var aSum = 0;
-        var bSum = 0;
-        var gSum = 0;
+        var aSin = 0;
+        var bSin = 0;
+        var gSin = 0;
+
+        var aCos = 0;
+        var bCos = 0;
+        var gCos = 0;
 
         var aLength = tempA.length;
         var bLength = tempB.length;
         var gLength = tempG.length;
 
         while (tempA.length > 0) {
-            aSum += parseFloat(tempA.pop());
+            aCos += Math.cos(convert("rad", parseFloat(tempA[0])));
+            aSin += Math.sin(convert("rad",parseFloat(tempA.pop())));
         }
         while (tempB.length > 0) {
-            bSum += parseFloat(tempB.pop());
+            bCos += Math.cos(convert("rad", parseFloat(tempB[0])));
+            bSin += Math.sin(convert("rad", parseFloat(tempB.pop())));
         }
         while (tempG.length > 0) {
-            gSum += parseFloat(tempG.pop());
+            gCos += Math.cos(convert("rad", parseFloat(tempG[0])));
+            gSin += Math.sin(convert("rad", parseFloat(tempG.pop())));
         }
+
+        var a = (360+ convert("deg", Math.atan2(aSin , aCos)))%360;
+        var b = convert("deg", Math.atan2(bSin , bCos));
+        var g = convert("deg", Math.atan2(gSin , gCos));
 
         if (aLength + bLength + gLength > 0) {
             var html = '';
-            html += 'a: ' + (Math.round(aSum / aLength * 100) / 100).toFixed(2) + '&nbsp;&nbsp;&nbsp;&nbsp;y: ' + (Math.round(bSum / bLength * 100) / 100).toFixed(2) + '&nbsp;&nbsp;&nbsp;&nbsp;z: ' + (Math.round(gSum / gLength * 100) / 100).toFixed(2) + '<br />';
+            html += 'a: ' + (Math.round(a * 100) / 100).toFixed(2) + '&nbsp;&nbsp;&nbsp;&nbsp;y: ' + (Math.round(b * 100) / 100).toFixed(2) + '&nbsp;&nbsp;&nbsp;&nbsp;z: ' + (Math.round(g * 100) / 100).toFixed(2) + '<br />';
             dataContainerOrientation.innerHTML = html;
         }
-    }, 100);
+    }, 500);
 }
