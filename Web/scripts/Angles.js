@@ -4,6 +4,8 @@ var alpha = [];
 var beta = [];
 var gamma = [];
 
+
+//Function to allow conversion between degrees and radians
 function convert(type, angle) {
     if (type == 'deg') {
         return angle * (180 / Math.PI);
@@ -12,6 +14,8 @@ function convert(type, angle) {
         return angle * (Math.PI / 180);
     }
 }
+
+//Sets up variables
 function init() {
     dataContainerOrientation = document.getElementById('dataContainerOrientation');
 }
