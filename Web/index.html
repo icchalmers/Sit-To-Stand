@@ -7,14 +7,20 @@
     <!-- GyroScope references -->
     <link href="css/index.css" rel="stylesheet" />
     <script src="scripts/Angles.js"></script>
+    <script src="scripts/Setup.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular.min.js"></script>
 </head>
-<body onload="init()">
+<body>
+    <input id="gobutton" type="submit" value="Start" style="font-size:xx-large" />
     <script>
+        getDimensions();
+    </script>
+    
+    <!--<script>
         getReading();
     </script>
     <div id="dataContainerOrientation" style="font-size:45px">
         No device orientation data
-    </div>
+    </div>-->
 </body>
 </html>
