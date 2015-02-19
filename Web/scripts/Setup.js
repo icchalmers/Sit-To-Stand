@@ -1,24 +1,27 @@
-﻿var width = screen.availHeight;
+﻿var width = 0;
+var height = 0;
 
-var height = screen.availWidth;
+var realWidth = 0;
+var realHeight = 0;
 
-var screenRatio;
-
-var realWidth;
-
-var realHeight;
-
-
+var sw = 50;
 
 function setValues() {
-        if (window.innerHeight > window.innerWidth) { realWidth = window.innerHeight; realHeight = window.innerWidth; screenRatio = (window.innerWidth / window.innerHeight); }
+    "use strict";
+    width = screen.availWidth;
+    height = screen.availHeight;
 
-        else { realWidth = window.innerWidth; realHeight = window.innerHeight; screenRatio = (window.innerHeight / window.innerWidth); }
+    if (height > width) {
+        realWidth = height;
+        realHeight = width;
+    }
+    else {
+        realWidth = width;
+        realHeight = height;
+    }
 }
 
-function getDimensions() {
+function resizeBtn() {
     setValues();
-    var myElement = document.getElementById("gobutton");
-    myElement.style.height = 0.96* realHeight + "px";
-    myElement.style.width = 0.97* realWidth + "px";
+    sw = realWidth;
 }

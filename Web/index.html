@@ -14,10 +14,10 @@
 </head>
 <body>
     <div ng-app="" ng-controller="balanceController">
-        <button id = "gobutton" ng-click="toggleStart()" ng-show="hideStart" style="font-size:xx-large">Start</button>
-        <script>
-            getDimensions();
-        </script>
+        <button id="gobutton" class="btn btn-primary" style="{{getStyle()}}" ng-click="toggleStart()" ng-show="hideStart">Start</button>
+        <!--<script>
+            resizeBtn();
+        </script>-->
         <div class="row" ng-hide="hideStart">
             <div class="col-xs-8">
                 <div class="progress">
