@@ -18,18 +18,19 @@
         <script>
             getDimensions();
         </script>
-    </div>
-    <div ng-app="" ng-controller="balanceController" class="row">
-        <div class="col-xs-8" ng-hide="hideStart">
-            <div class="progress" ng-hide="hideStart">
-                <div id="progress" ng-hide="hideStart" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="30">
+        <div class="row" ng-hide="hideStart">
+            <div class="col-xs-8">
+                <div class="progress">
+                    <div id="progress" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="30">
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-xs-4">
-            <p id="time"></p>
+            <div class="col-xs-4">
+                <p id="time"></p>
+            </div>
         </div>
     </div>
+    
 
     <script src="scripts/balanceController.js"></script>
     <!--<script>
