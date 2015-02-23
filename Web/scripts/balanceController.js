@@ -35,7 +35,7 @@ function balanceController($scope) {
 }
 
 function startCalibration() {
-    calibTime = 0;
+    calibTime = -0.9;
     var calib = setInterval(function () {
         calibTime+=0.1;
         document.getElementById('progress').style.width = Math.ceil((calibTime * 1000) / 300) + "%";

@@ -9,15 +9,11 @@
     <link href="bootstrap/css/bootstrap-theme.css" rel="stylesheet"/>
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet"/> 
     <script src="scripts/Angles.js"></script>
-    <script src="scripts/Setup.js"></script>
     <script src="angular-1.2.26/angular.js"></script>
 </head>
 <body>
     <div ng-app="" ng-controller="balanceController">
         <button id="gobutton" class="btn btn-primary" style="{{getStyle()}}" ng-click="toggleStart()" ng-show="hideStart">Start</button>
-        <!--<script>
-            resizeBtn();
-        </script>-->
         <div class="row" ng-hide="hideStart">
             <div class="col-xs-8">
                 <div class="progress">
