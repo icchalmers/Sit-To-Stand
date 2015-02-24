@@ -6,7 +6,13 @@ var realWidth = 500;
 var realHeight = 500;
 
 var sw = 50;
+var audio;
 
+function setup() {
+    audio = document.getElementById("player");
+    audio.play();
+    audio.pause();
+}
 function setValues() {
     width = screen.availWidth;
     height = screen.availHeight;
@@ -35,20 +41,26 @@ function balanceController($scope) {
 }
 
 function startCalibration() {
-    calibTime = -0.9;
+    calibTime = 0;
     var calib = setInterval(function () {
         calibTime+=0.1;
-        document.getElementById('progress').style.width = Math.ceil((calibTime * 1000) / 300) + "%";
+        document.getElementById('progress').style.width = Math.ceil(calibTime * 3.33333334) + "%";
         showTime();
         if (calibTime > 30.1) {
             document.getElementById('progress').classList.remove("active");
+            playSound();
             clearInterval(calib);
-            ($scope.progress).removeClass('active');
         }
     }, 100);
 }
 
 function showTime() {
-    var t = "Time elapsed is: " + Math.round(calibTime) + "s";
+    var t = "Time elapsed is: " + Math.floor(calibTime) + "s";
     document.getElementById("time").innerHTML = t;
 }
+
+function playSound() {
+    audio.currentTime = "0";
+    audio.play();
+}
+

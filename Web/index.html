@@ -11,13 +11,20 @@
     <script src="scripts/Angles.js"></script>
     <script src="angular-1.2.26/angular.js"></script>
 </head>
-<body>
+<body onload="setup()">
+
     <div ng-app="" ng-controller="balanceController">
         <button id="gobutton" class="btn btn-primary" style="{{getStyle()}}" ng-click="toggleStart()" ng-show="hideStart">Start</button>
+
         <div class="row" ng-hide="hideStart">
             <div class="col-xs-8">
                 <div class="progress">
                     <div id="progress" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="30">
+                        <audio id="player" preload="auto">
+                            <source src="sounds/startTone.mp3" />
+                            <source src="sounds/startTone.wav" />
+                            Sound not available
+                        </audio>
                     </div>
                 </div>
             </div>
