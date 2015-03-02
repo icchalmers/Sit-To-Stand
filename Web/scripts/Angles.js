@@ -1,8 +1,6 @@
 ﻿var dataContainerOrientation;
 var counter = 0;
-var alpha = [];
-var beta = [];
-var gamma = [];
+
 
 
 //Function to allow conversion between degrees and radians
@@ -39,7 +37,7 @@ function orient() {
 
 function getReading() {
     window.setInterval(function () {
-        orient()
+        
     }, 100);
     window.setInterval(function () {
         var tempA = alpha;
