@@ -9,13 +9,11 @@ var sw = 50;
 var audio;
 
 var screenNum = 1;
-var calibDone = false;
 var angleCalibrations = [];
 
 var alpha = [];
 var beta = [];
 var gamma = [];
-window.navigator = window.navigator || {};
 
 //Controller for app set first
 function balanceController($scope, $interval) {
@@ -71,10 +69,6 @@ function setValues() {
         realWidth = width;
         realHeight = height;
     }
-}
-
-function startCalibration() {
-    
 }
 
 function showTime() {
