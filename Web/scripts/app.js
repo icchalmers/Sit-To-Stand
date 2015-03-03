@@ -8,7 +8,7 @@ var realHeight = 500;
 var sw = 50;
 var audio;
 
-var screenNum = 1;
+var screen = "Start";
 var angleCalibrations = [];
 
 var alpha = [];
@@ -27,8 +27,8 @@ function balanceController($scope, $interval) {
         return screenNum === num;
     }
 
-    $scope.nextScreen = function () {
-        screenNum++;
+    $scope.nextScreen = function (value) {
+        screenNum = value;
     }
 
     $scope.getAngleAverage = function(num){
@@ -43,7 +43,7 @@ function balanceController($scope, $interval) {
             document.getElementById('progress').style.width = Math.ceil((calibTime * 10)/30) + "%";
             showTime();
             orient();
-            if (calibTime % 5 === 0) {
+            if (calibTime % 5 === 0 && calibTime > 0) {
                 calibrate();
                 }
             if (calibTime > 300) {
@@ -98,7 +98,8 @@ function orient() {
             if (event.gamma != null) {
                 gamma.push(event.gamma);
             }
-        });
+            window.removeEventListener('deviceorientation');
+        },true);
 
     }
 }
@@ -117,9 +118,9 @@ function calibrate() {
     var tempB = beta;
     var tempG = gamma;
 
-    alpha = [];
-    beta = [];
-    gamma = [];
+    alpha.length = 0;
+    beta.length = 0;
+    gamma.length = 0;
 
     var aSin = 0;
     var bSin = 0;
@@ -152,9 +153,6 @@ function calibrate() {
 
     if (aLength * bLength * gLength != 0) {
         angleCalibrations = [a, b, g];
-        var html = '';
-        html += 'a: ' + (Math.round(a * 100) / 100).toFixed(2) + '&nbsp;&nbsp;&nbsp;&nbsp;y: ' + (Math.round(b * 100) / 100).toFixed(2) + '&nbsp;&nbsp;&nbsp;&nbsp;z: ' + (Math.round(g * 100) / 100).toFixed(2) + '<br />';
-        document.getElementById('showAngles').innerHTML = html;
     }
 }
 
