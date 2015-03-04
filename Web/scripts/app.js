@@ -24,91 +24,8 @@ var calibGamma = 0;
 var diffAlpha = 0;
 var diffBeta = 0;
 var diffGamma = 0;
+var smoothedAlpha = 0;
 
-//Controller for app set first
-function balanceController($scope, $interval) {
-    setValues();
-    $scope.getStyle = function () {
-        var s = "width:" + realWidth + "px; height:" + realHeight + "px; font-size:xx-large";
-        return s;
-    }
-
-    $scope.isScreen = function (num) {
-        return screenNum === num;
-    }
-
-    $scope.nextScreen = function () {
-        screenNum++;
-    }
-
-    $scope.setScreen = function (num) {
-        screenNum = num;
-    }
-
-    $scope.getAngleAverage = function(num){
-        return (Math.round(angleCalibrations[num] * 100) / 100).toFixed(2);
-    }
-
-    $scope.getCalibValue = function (num) {
-        if (num === 0) {
-            return (Math.round(calibAlpha * 100) / 100).toFixed(2);
-        }
-        if (num === 1) {
-            return (Math.round(calibBeta * 100) / 100).toFixed(2);
-        }
-        if (num === 2) {
-            return (Math.round(calibGamma * 100) / 100).toFixed(2);
-        }
-    }
-
-    $scope.getDiffValue = function (num) {
-        if (num === 0) {
-            return (Math.round(diffAlpha * 100) / 100).toFixed(2);
-        }
-        if (num === 1) {
-            return (Math.round(diffBeta * 100) / 100).toFixed(2);
-        }
-        if (num === 2) {
-            return (Math.round(diffGamma * 100) / 100).toFixed(2);
-        }
-    }
-
-    var calib;
-    $scope.startCalib = function () {
-        calibTime = 0;
-        calib = $interval(function () {
-            calibTime++;
-            document.getElementById('progress').style.width = Math.ceil((calibTime * 10)/30) + "%";
-            showTime();
-            orient();
-            if (calibTime % 5 === 0) {
-                smoothAngles(true);
-                }
-            if (calibTime > 300) {
-                document.getElementById('progress').classList.remove("active");
-                playSound();
-                calibrateValues();
-                $scope.setScreen(3);
-                $interval.cancel(calib);
-                $scope.startRunning();
-            }
-        }, 100);
-    }
-    
-    var running;
-    $scope.startRunning = function () {
-        var runTime = 0;
-        running = $interval(function () {
-            //document.getElementById('testing').innerHTML = "Running: " + angular.isDefined(running);
-            orient();
-            runTime++;
-            if (runTime % 5 === 0 &&runTime>0) {
-                smoothAngles(false);
-                runTime = 0;
-            }
-        }, 100);
-    }
-}
 
 //Helper methods for controller to use
 function setValues() {
@@ -126,7 +43,7 @@ function setValues() {
 }
 
 function showTime() {
-    var t = "Time elapsed is: " + Math.floor(calibTime/10) + "s";
+    var t = "Time elapsed is: " + Math.floor(calibTime / 10) + "s";
     document.getElementById("time").innerHTML = t;
 }
 
@@ -141,10 +58,12 @@ function updateBar() {
 }
 
 function orient() {
+
     if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', function (event) {
             if (event.alpha != null) {
-                alpha.push(event.alpha);
+                smoothedAlpha = event.alpha + 0.25*(smoothedAlpha-event.alpha)
+                alpha.push(smoothedAlpha);
             }
             if (event.beta != null) {
                 beta.push(event.beta);
@@ -200,7 +119,7 @@ function smoothAngles(calibrating) {
         gSin += Math.sin(convert("rad", parseFloat(tempG.pop())));
     }
 
-    var a = (360 + convert("deg", Math.atan2(aSin, aCos))) % 360;
+    var a = convert("deg", Math.atan2(aSin, aCos));
     var b = convert("deg", Math.atan2(bSin, bCos));
     var g = convert("deg", Math.atan2(gSin, gCos));
 
@@ -212,73 +131,164 @@ function smoothAngles(calibrating) {
             totalGamma.push(g);
         }
         else {
-            diffAlpha = angleCalibrations[0] - calibAlpha;
+            diffAlpha = convert("deg",Math.atan2(Math.sin(convert("rad",angleCalibrations[0] - calibAlpha)),Math.cos(convert("rad",angleCalibrations[0] - calibAlpha))));
             diffBeta = angleCalibrations[1] - calibBeta;
             diffGamma = angleCalibrations[2] - calibGamma;
         }
     }
 }
 
-    function setSource() {
-        audio = document.getElementById('player');
-        audio.src = 'sounds/startTone.mp3';
+function setSource() {
+    audio = document.getElementById('player');
+    audio.src = 'sounds/startTone.mp3';
+}
+
+function requiresUserGesture() {
+    // test if play() is ignored when not called from an input event handler
+    var test = document.createElement('audio');
+    test.play();
+    return test.paused;
+}
+
+function removeBehaviorsRestrictions() {
+    audio = document.getElementById('player');
+    audio.load();
+    window.removeEventListener('keydown', removeBehaviorsRestrictions);
+    window.removeEventListener('mousedown', removeBehaviorsRestrictions);
+    window.removeEventListener('touchstart', removeBehaviorsRestrictions);
+    setTimeout(setSource, 100);
+}
+
+function setupSound() {
+    if (requiresUserGesture()) {
+        window.addEventListener('keydown', removeBehaviorsRestrictions);
+        window.addEventListener('mousedown', removeBehaviorsRestrictions);
+        window.addEventListener('touchstart', removeBehaviorsRestrictions);
     }
-
-    function requiresUserGesture() {
-        // test if play() is ignored when not called from an input event handler
-        var test = document.createElement('audio');
-        test.play();
-        return test.paused;
+    else {
+        setSource();
     }
+}
 
-    function removeBehaviorsRestrictions() {
-        audio = document.getElementById('player');
-        audio.load();
-        window.removeEventListener('keydown', removeBehaviorsRestrictions);
-        window.removeEventListener('mousedown', removeBehaviorsRestrictions);
-        window.removeEventListener('touchstart', removeBehaviorsRestrictions);
-        setTimeout(setSource, 100);
+function calibrateValues() {
+    var aSin = 0;
+    var bSin = 0;
+    var gSin = 0;
+
+    var aCos = 0;
+    var bCos = 0;
+    var gCos = 0;
+
+
+    var i = 0;
+    for (i in totalAlpha) {
+        aCos += Math.cos(convert("rad", totalAlpha[i]));
+        aSin += Math.sin(convert("rad", totalAlpha[i]));
     }
+    calibAlpha = convert("deg", Math.atan2(aSin, aCos));
 
-    function setupSound() {
-        if (requiresUserGesture()) {
-            window.addEventListener('keydown', removeBehaviorsRestrictions);
-            window.addEventListener('mousedown', removeBehaviorsRestrictions);
-            window.addEventListener('touchstart', removeBehaviorsRestrictions);
-        }
-        else {
-            setSource();
-        }
+    i = 0;
+    for (i in totalBeta) {
+        bCos += Math.cos(convert("rad", totalBeta[i]));
+        bSin += Math.sin(convert("rad", totalBeta[i]));
     }
+    calibBeta = convert("deg", Math.atan2(bSin, bCos));
 
-    function calibrateValues() {
-        var aSin = 0;
-        var bSin = 0;
-        var gSin = 0;
-
-        var aCos = 0;
-        var bCos = 0;
-        var gCos = 0;
-
-
-        var i = 0;
-        for (i in totalAlpha) {
-            aCos += Math.cos(convert("rad", totalAlpha[i]));
-            aSin += Math.sin(convert("rad", totalAlpha[i]));
-        }
-        calibAlpha = (360 + convert("deg", Math.atan2(aSin, aCos))) % 360;
-
-        i = 0;
-        for (i in totalBeta) {
-            bCos += Math.cos(convert("rad", totalBeta[i]));
-            bSin += Math.sin(convert("rad", totalBeta[i]));
-        }
-        calibBeta = convert("deg", Math.atan2(bSin, bCos));
-
-        i = 0;
-        for (i in totalGamma) {
-            gCos += Math.cos(convert("rad", totalGamma[i]));
-            gSin += Math.sin(convert("rad", totalGamma[i]));
-        }
-        calibGamma = convert("deg", Math.atan2(gSin, gCos));
+    i = 0;
+    for (i in totalGamma) {
+        gCos += Math.cos(convert("rad", totalGamma[i]));
+        gSin += Math.sin(convert("rad", totalGamma[i]));
     }
+    calibGamma = convert("deg", Math.atan2(gSin, gCos));
+}
+
+//Controller for app set first
+function balanceController($scope, $interval) {
+    setValues();
+    $scope.getStyle = function () {
+        var s = "width:" + realWidth + "px; height:" + realHeight + "px; font-size:xx-large";
+        return s;
+    };
+
+    $scope.isScreen = function (num) {
+        return screenNum === num;
+    };
+
+    $scope.nextScreen = function () {
+        screenNum++;
+    };
+
+    $scope.setScreen = function (num) {
+        screenNum = num;
+    };
+
+    $scope.getAngleAverage = function (num) {
+        return (Math.round(angleCalibrations[num] * 100) / 100).toFixed(2);
+    };
+
+    $scope.getCalibValue = function (num) {
+        if (num === 0) {
+            return (Math.round(calibAlpha * 100) / 100).toFixed(2);
+        }
+        if (num === 1) {
+            return (Math.round(calibBeta * 100) / 100).toFixed(2);
+        }
+        if (num === 2) {
+            return (Math.round(calibGamma * 100) / 100).toFixed(2);
+        }
+    };
+
+    $scope.getDiffValue = function (num) {
+        if (num === 0) {
+            return (Math.round(diffAlpha * 100) / 100).toFixed(2);
+        }
+        if (num === 1) {
+            return (Math.round(diffBeta * 100) / 100).toFixed(2);
+        }
+        if (num === 2) {
+            return (Math.round(diffGamma * 100) / 100).toFixed(2);
+        }
+    };
+
+
+    $scope.startOver = function () {
+        $scope.setScreen(1);
+    };
+
+
+    var calib;
+    $scope.startCalib = function () {
+        calibTime = 0;
+        calib = $interval(function () {
+            calibTime++;
+            document.getElementById('progress').style.width = Math.ceil((calibTime * 10) / 30) + "%";
+            showTime();
+            orient();
+            if (calibTime % 5 === 0) {
+                smoothAngles(true);
+            }
+            if (calibTime > 300) {
+                playSound();
+                calibrateValues();
+                $scope.setScreen(3);
+                $interval.cancel(calib);
+                $scope.startRunning();
+            }
+        }, 100);
+    };
+
+    var running;
+    $scope.startRunning = function () {
+        var runTime = 0;
+        running = $interval(function () {
+            //document.getElementById('testing').innerHTML = "Running: " + angular.isDefined(running);
+            orient();
+            runTime++;
+            if (runTime % 5 === 0 && runTime > 0) {
+                smoothAngles(false);
+                runTime = 0;
+            }
+        }, 100);
+    };
+
+}

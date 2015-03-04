@@ -51,9 +51,6 @@
                         <dt>Gamma</dt>
                         <dd>{{getAngleAverage(2)}} Degrees</dd>
                     </dl>
-                    <p id="testing">
-
-                    </p>
                 </div>
             </div>
             <div class="col-xs-4" ng-show="isScreen(3)">
@@ -67,7 +64,7 @@
                         <dt>Gamma</dt>
                         <dd>{{getCalibValue(2)}} Degrees</dd>
                     </dl>
-                    <button id="done" class="btn btn-primary btn-block btn-lg" ng-click="setScreen(1)" ng-show="isScreen(3)">Done</button>
+                    <button id="done" class="btn btn-primary btn-block btn-lg" ng-click="startOver()" ng-show="isScreen(3)">Done</button>
                 </div>
             </div>
             <div class="col-xs-4" ng-show="isScreen(3)">
