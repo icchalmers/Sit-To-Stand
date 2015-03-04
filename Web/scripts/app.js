@@ -15,6 +15,16 @@ var alpha = [];
 var beta = [];
 var gamma = [];
 
+var totalAlpha = [];
+var totalBeta = [];
+var totalGamma = [];
+var calibAlpha = 0;
+var calibBeta = 0;
+var calibGamma = 0;
+var diffAlpha = 0;
+var diffBeta = 0;
+var diffGamma = 0;
+
 //Controller for app set first
 function balanceController($scope, $interval) {
     setValues();
@@ -31,8 +41,36 @@ function balanceController($scope, $interval) {
         screenNum++;
     }
 
+    $scope.setScreen = function (num) {
+        screenNum = num;
+    }
+
     $scope.getAngleAverage = function(num){
         return (Math.round(angleCalibrations[num] * 100) / 100).toFixed(2);
+    }
+
+    $scope.getCalibValue = function (num) {
+        if (num === 0) {
+            return (Math.round(calibAlpha * 100) / 100).toFixed(2);
+        }
+        if (num === 1) {
+            return (Math.round(calibBeta * 100) / 100).toFixed(2);
+        }
+        if (num === 2) {
+            return (Math.round(calibGamma * 100) / 100).toFixed(2);
+        }
+    }
+
+    $scope.getDiffValue = function (num) {
+        if (num === 0) {
+            return (Math.round(diffAlpha * 100) / 100).toFixed(2);
+        }
+        if (num === 1) {
+            return (Math.round(diffBeta * 100) / 100).toFixed(2);
+        }
+        if (num === 2) {
+            return (Math.round(diffGamma * 100) / 100).toFixed(2);
+        }
     }
 
     var calib;
@@ -44,13 +82,29 @@ function balanceController($scope, $interval) {
             showTime();
             orient();
             if (calibTime % 5 === 0) {
-                calibrate();
+                smoothAngles(true);
                 }
             if (calibTime > 300) {
                 document.getElementById('progress').classList.remove("active");
                 playSound();
-                screenNum++;
+                calibrateValues();
+                $scope.setScreen(3);
                 $interval.cancel(calib);
+                $scope.startRunning();
+            }
+        }, 100);
+    }
+    
+    var running;
+    $scope.startRunning = function () {
+        var runTime = 0;
+        running = $interval(function () {
+            //document.getElementById('testing').innerHTML = "Running: " + angular.isDefined(running);
+            orient();
+            runTime++;
+            if (runTime % 5 === 0 &&runTime>0) {
+                smoothAngles(false);
+                runTime = 0;
             }
         }, 100);
     }
@@ -112,7 +166,7 @@ function convert(type, angle) {
     }
 }
 
-function calibrate() {
+function smoothAngles(calibrating) {
     var tempA = alpha;
     var tempB = beta;
     var tempG = gamma;
@@ -152,9 +206,16 @@ function calibrate() {
 
     if (aLength * bLength * gLength != 0) {
         angleCalibrations = [a, b, g];
-        var html = '';
-        html += 'a: ' + (Math.round(a * 100) / 100).toFixed(2) + '&nbsp;&nbsp;&nbsp;&nbsp;y: ' + (Math.round(b * 100) / 100).toFixed(2) + '&nbsp;&nbsp;&nbsp;&nbsp;z: ' + (Math.round(g * 100) / 100).toFixed(2) + '<br />';
-        document.getElementById('showAngles').innerHTML = html;
+        if (calibrating) {
+            totalAlpha.push(a);
+            totalBeta.push(b);
+            totalGamma.push(g);
+        }
+        else {
+            diffAlpha = angleCalibrations[0] - calibAlpha;
+            diffBeta = angleCalibrations[1] - calibBeta;
+            diffGamma = angleCalibrations[2] - calibGamma;
+        }
     }
 }
 
@@ -176,7 +237,7 @@ function calibrate() {
         window.removeEventListener('keydown', removeBehaviorsRestrictions);
         window.removeEventListener('mousedown', removeBehaviorsRestrictions);
         window.removeEventListener('touchstart', removeBehaviorsRestrictions);
-        setTimeout(setSource, 1000);
+        setTimeout(setSource, 100);
     }
 
     function setupSound() {
@@ -188,4 +249,36 @@ function calibrate() {
         else {
             setSource();
         }
+    }
+
+    function calibrateValues() {
+        var aSin = 0;
+        var bSin = 0;
+        var gSin = 0;
+
+        var aCos = 0;
+        var bCos = 0;
+        var gCos = 0;
+
+
+        var i = 0;
+        for (i in totalAlpha) {
+            aCos += Math.cos(convert("rad", totalAlpha[i]));
+            aSin += Math.sin(convert("rad", totalAlpha[i]));
+        }
+        calibAlpha = (360 + convert("deg", Math.atan2(aSin, aCos))) % 360;
+
+        i = 0;
+        for (i in totalBeta) {
+            bCos += Math.cos(convert("rad", totalBeta[i]));
+            bSin += Math.sin(convert("rad", totalBeta[i]));
+        }
+        calibBeta = convert("deg", Math.atan2(bSin, bCos));
+
+        i = 0;
+        for (i in totalGamma) {
+            gCos += Math.cos(convert("rad", totalGamma[i]));
+            gSin += Math.sin(convert("rad", totalGamma[i]));
+        }
+        calibGamma = convert("deg", Math.atan2(gSin, gCos));
     }

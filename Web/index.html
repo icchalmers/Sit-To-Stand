@@ -13,9 +13,9 @@
 </head>
 <body onload="setupSound()">
     <div ng-app="" ng-controller="balanceController">
-        <button id="gobutton" class="btn btn-primary" style="{{getStyle()}}" ng-click="nextScreen(); startCalib();" ng-show="isScreen(1)">Start</button>
+        <button id="gobutton" class="btn btn-primary" style="{{getStyle()}}" ng-click="setScreen(2); startCalib();" ng-show="isScreen(1)">Start</button>
 
-        <div class="row" >
+        <div class="row">
             <div class="col-xs-8" ng-show="isScreen(2)">
                 <div class="progress">
                     <div id="progress" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="30">
@@ -37,25 +37,53 @@
                     <dt>Gamma</dt>
                     <dd>{{getAngleAverage(2)}} Degrees</dd>
                 </dl>
-                </div>
+            </div>
         </div>
-        <div class="text-center" ng-show="isScreen(3)">
-            <dl>
-                <dt>Alpha</dt>
-                <dd>{{getAngleAverage(0)}} Degrees</dd>
-                <dt>Beta</dt>
-                <dd>{{getAngleAverage(1)}} Degrees</dd>
-                <dt>Gamma</dt>
-                <dd>{{getAngleAverage(2)}} Degrees</dd>
-            </dl>
-            <!--<p id="showAngles"></p>-->
+        <div class="row">
+            <div class="col-xs-4" ng-show="isScreen(3)">
+                <div class="text-center">
+                    <h2>Continuous Average</h2>
+                    <dl>
+                        <dt>Alpha</dt>
+                        <dd>{{getAngleAverage(0)}} Degrees</dd>
+                        <dt>Beta</dt>
+                        <dd>{{getAngleAverage(1)}} Degrees</dd>
+                        <dt>Gamma</dt>
+                        <dd>{{getAngleAverage(2)}} Degrees</dd>
+                    </dl>
+                    <p id="testing">
+
+                    </p>
+                </div>
+            </div>
+            <div class="col-xs-4" ng-show="isScreen(3)">
+                <div class="text-center">
+                    <h2>Calibrated Value</h2>
+                    <dl>
+                        <dt>Alpha</dt>
+                        <dd> {{getCalibValue(0)}} Degrees</dd>
+                        <dt>Beta</dt>
+                        <dd>{{getCalibValue(1)}} Degrees</dd>
+                        <dt>Gamma</dt>
+                        <dd>{{getCalibValue(2)}} Degrees</dd>
+                    </dl>
+                    <button id="done" class="btn btn-primary btn-block btn-lg" ng-click="setScreen(1)" ng-show="isScreen(3)">Done</button>
+                </div>
+            </div>
+            <div class="col-xs-4" ng-show="isScreen(3)">
+                <div class="text-center">
+                    <h2>Differential Value</h2>
+                    <dl>
+                        <dt>Alpha</dt>
+                        <dd> {{getDiffValue(0)}} Degrees</dd>
+                        <dt>Beta</dt>
+                        <dd>{{getDiffValue(1)}} Degrees</dd>
+                        <dt>Gamma</dt>
+                        <dd>{{getDiffValue(2)}} Degrees</dd>
+                    </dl>
+                </div>
+            </div>
         </div>
     </div>
-    <!--<script>
-        getReading();
-    </script>
-    <div id="dataContainerOrientation" style="font-size:45px">
-        No device orientation data
-    </div>-->
 </body>
 </html>
