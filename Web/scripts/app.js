@@ -62,6 +62,9 @@ function orient() {
     if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', function (event) {
             if (event.alpha != null) {
+                if (smoothedAlpha === 0) {
+                    smoothedAlpha = event.alpha;
+                }
                 smoothedAlpha = event.alpha + 0.25*(smoothedAlpha-event.alpha)
                 alpha.push(smoothedAlpha);
             }
@@ -253,6 +256,8 @@ function balanceController($scope, $interval) {
 
     $scope.startOver = function () {
         $scope.setScreen(1);
+        var message = "Message Sent";
+        Android.showToast(message);
     };
 
 
