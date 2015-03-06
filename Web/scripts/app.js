@@ -26,6 +26,11 @@ var diffBeta = 0;
 var diffGamma = 0;
 var smoothedAlpha = 0;
 
+var rawValues = [];
+
+//Sent to Android to create file to log values
+var message = "";
+
 
 //Helper methods for controller to use
 function setValues() {
@@ -59,23 +64,29 @@ function updateBar() {
 
 function orient() {
 
-    if (window.DeviceOrientationEvent) {
-        window.addEventListener('deviceorientation', function (event) {
-            if (event.alpha != null) {
-                if (smoothedAlpha === 0) {
-                    smoothedAlpha = event.alpha;
-                }
-                smoothedAlpha = event.alpha + 0.25*(smoothedAlpha-event.alpha)
-                alpha.push(smoothedAlpha);
+    var handler = function (event) {
+        if (event.alpha != null) {
+            if (smoothedAlpha === 0) {
+                smoothedAlpha = event.alpha;
             }
-            if (event.beta != null) {
-                beta.push(event.beta);
-            }
-            if (event.gamma != null) {
-                gamma.push(event.gamma);
-            }
-        });
+            smoothedAlpha = event.alpha + 0.25 * (smoothedAlpha - event.alpha)
+            alpha.push(smoothedAlpha);
+            message += "A:" + smoothedAlpha;
+        }
+        if (event.beta != null) {
+            beta.push(event.beta);
+            message += " B:" + event.beta;
+        }
+        if (event.gamma != null) {
+            gamma.push(event.gamma);
+            message += " G:" + event.gamma;
+        }
+        message += "\n";
+        window.removeEventListener('deviceorientation', handler,false);
+    };
 
+    if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', handler, false);
     }
 }
 
@@ -125,6 +136,8 @@ function smoothAngles(calibrating) {
     var a = convert("deg", Math.atan2(aSin, aCos));
     var b = convert("deg", Math.atan2(bSin, bCos));
     var g = convert("deg", Math.atan2(gSin, gCos));
+
+    message += "Averaged:\nA:" + a + " B:" + b + " G:" + g + "\n";
 
     if (aLength * bLength * gLength != 0) {
         angleCalibrations = [a, b, g];
@@ -205,6 +218,10 @@ function calibrateValues() {
     calibGamma = convert("deg", Math.atan2(gSin, gCos));
 }
 
+function createFile() {
+
+}
+
 //Controller for app set first
 function balanceController($scope, $interval) {
     setValues();
@@ -255,9 +272,9 @@ function balanceController($scope, $interval) {
 
 
     $scope.startOver = function () {
+        //message = "Message reset by function";
+        Android.makeFile(message);
         $scope.setScreen(1);
-        var message = "Message Sent";
-        Android.showToast(message);
     };
 
 
