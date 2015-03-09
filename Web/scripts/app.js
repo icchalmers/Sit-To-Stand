@@ -5,11 +5,10 @@ var height = 0;
 var realWidth = 500;
 var realHeight = 500;
 
-var sw = 50;
 var audio;
 
 var screenNum = 1;
-var angleCalibrations = [];
+var angleCalibrations = [0,0,0];
 
 var alpha = [];
 var beta = [];
@@ -25,8 +24,12 @@ var diffAlpha = 0;
 var diffBeta = 0;
 var diffGamma = 0;
 var smoothedAlpha = 0;
+var smoothedBeta = 0;
+var smoothedGamma = 0;
 
 var rawValues = [];
+
+var listen;
 
 //Sent to Android to create file to log values
 var message = "";
@@ -48,7 +51,7 @@ function setValues() {
 }
 
 function showTime() {
-    var t = "Time elapsed is: " + Math.floor(calibTime / 10) + "s";
+    var t = "Time elapsed is: " + Math.floor(calibTime / 10) + "s\n";
     document.getElementById("time").innerHTML = t;
 }
 
@@ -63,27 +66,39 @@ function updateBar() {
 }
 
 function orient() {
-
+    
     var handler = function (event) {
-        if (event.alpha != null) {
-            if (smoothedAlpha === 0) {
-                smoothedAlpha = event.alpha;
+        if (event !== null) {
+            if (event.alpha != null && event.alpha !== 0) {
+                if (smoothedAlpha === 0) {
+                    smoothedAlpha = event.alpha;
+                }
+                smoothedAlpha = event.alpha + 0.25 * (smoothedAlpha - event.alpha);
+                alpha.push(smoothedAlpha);
+                message += "A:" + smoothedAlpha;
             }
-            smoothedAlpha = event.alpha + 0.25 * (smoothedAlpha - event.alpha)
-            alpha.push(smoothedAlpha);
-            message += "A:" + smoothedAlpha;
+            if (event.beta != null && event.beta !== 0) {
+                if (smoothedBeta === 0) {
+                    smoothedBeta = event.beta;
+                }
+                smoothedBeta = event.beta + 0.25 * (smoothedBeta - event.beta);
+                beta.push(smoothedBeta);
+                message += "A:" + smoothedBeta;
+            }
+            if (event.gamma != null && event.gamma !== 0) {
+                if (smoothedGamma === 0) {
+                    smoothedGamma = event.gamma;
+                }
+                smoothedGamma = event.gamma + 0.25 * (smoothedGamma - event.gamma);
+                gamma.push(smoothedGamma);
+                message += "A:" + smoothedGamma;
+            }
+            message += "\n";
         }
-        if (event.beta != null) {
-            beta.push(event.beta);
-            message += " B:" + event.beta;
-        }
-        if (event.gamma != null) {
-            gamma.push(event.gamma);
-            message += " G:" + event.gamma;
-        }
-        message += "\n";
-        window.removeEventListener('deviceorientation', handler,false);
+        window.removeEventListener('deviceorientation', handler, false);
+        listen = null;
     };
+
 
     if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', handler, false);
@@ -133,7 +148,7 @@ function smoothAngles(calibrating) {
         gSin += Math.sin(convert("rad", parseFloat(tempG.pop())));
     }
 
-    var a = convert("deg", Math.atan2(aSin, aCos));
+    var a = (360 + convert("deg", Math.atan2(aSin, aCos)))%360;
     var b = convert("deg", Math.atan2(bSin, bCos));
     var g = convert("deg", Math.atan2(gSin, gCos));
 
@@ -147,7 +162,7 @@ function smoothAngles(calibrating) {
             totalGamma.push(g);
         }
         else {
-            diffAlpha = convert("deg",Math.atan2(Math.sin(convert("rad",angleCalibrations[0] - calibAlpha)),Math.cos(convert("rad",angleCalibrations[0] - calibAlpha))));
+            diffAlpha = convert("deg", Math.atan2(Math.sin(convert("rad", angleCalibrations[0] - calibAlpha)), Math.cos(convert("rad", angleCalibrations[0] - calibAlpha))));
             diffBeta = angleCalibrations[1] - calibBeta;
             diffGamma = angleCalibrations[2] - calibGamma;
         }
@@ -201,7 +216,7 @@ function calibrateValues() {
         aCos += Math.cos(convert("rad", totalAlpha[i]));
         aSin += Math.sin(convert("rad", totalAlpha[i]));
     }
-    calibAlpha = convert("deg", Math.atan2(aSin, aCos));
+    calibAlpha = (360+ convert("deg", Math.atan2(aSin, aCos)))%360;
 
     i = 0;
     for (i in totalBeta) {
@@ -216,6 +231,8 @@ function calibrateValues() {
         gSin += Math.sin(convert("rad", totalGamma[i]));
     }
     calibGamma = convert("deg", Math.atan2(gSin, gCos));
+
+    message+="Calibrated!\n"
 }
 
 function createFile() {
@@ -282,21 +299,21 @@ function balanceController($scope, $interval) {
     $scope.startCalib = function () {
         calibTime = 0;
         calib = $interval(function () {
-            calibTime++;
-            document.getElementById('progress').style.width = Math.ceil((calibTime * 10) / 30) + "%";
+            calibTime+=0.5;
+            document.getElementById('progress').style.width = Math.ceil((calibTime * 10) / 15) + "%";
             showTime();
             orient();
-            if (calibTime % 5 === 0) {
+            if (calibTime % 5 === 0 && calibTime>0) {
                 smoothAngles(true);
             }
-            if (calibTime > 300) {
+            if (calibTime > 150) {
                 playSound();
                 calibrateValues();
                 $scope.setScreen(3);
                 $interval.cancel(calib);
                 $scope.startRunning();
             }
-        }, 100);
+        }, 50);
     };
 
     var running;
@@ -313,4 +330,8 @@ function balanceController($scope, $interval) {
         }, 100);
     };
 
+    $scope.getTime = function(){
+        var today = new Date();
+        return today.toGMTString();
+    }
 }

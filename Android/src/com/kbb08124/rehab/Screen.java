@@ -28,6 +28,7 @@ public class Screen extends Activity {
 		myWebView = (WebView) findViewById(R.id.webView);
 		WebSettings webSettings = myWebView.getSettings();
 		webSettings.setJavaScriptEnabled(true);
+		webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
 		myWebView.loadUrl("https://devweb2014.cis.strath.ac.uk/~kbb08124/");
 		myWebView.addJavascriptInterface(new JavaScriptInterface(this), "Android");
 	}
