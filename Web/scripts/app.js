@@ -29,8 +29,6 @@ var smoothedGamma = 0;
 
 var rawValues = [];
 
-var listen;
-
 //Sent to Android to create file to log values
 var message = "";
 
@@ -83,7 +81,7 @@ function orient() {
                 }
                 smoothedBeta = event.beta + 0.25 * (smoothedBeta - event.beta);
                 beta.push(smoothedBeta);
-                message += "A:" + smoothedBeta;
+                message += " B:" + smoothedBeta;
             }
             if (event.gamma != null && event.gamma !== 0) {
                 if (smoothedGamma === 0) {
@@ -91,9 +89,14 @@ function orient() {
                 }
                 smoothedGamma = event.gamma + 0.25 * (smoothedGamma - event.gamma);
                 gamma.push(smoothedGamma);
-                message += "A:" + smoothedGamma;
+                message += " G:" + smoothedGamma;
             }
-            message += "\n";
+            var date = new Date();
+            var hours = date.getHours().toString();
+            var mins = date.getMinutes().toString();
+            var secs = date.getSeconds().toString();
+            var mil = date.getMilliseconds().toString();
+            message += (" T:" + hours +":"+mins+":"+secs+":"+mil+ "\n");
         }
         window.removeEventListener('deviceorientation', handler, false);
         listen = null;
@@ -152,7 +155,7 @@ function smoothAngles(calibrating) {
     var b = convert("deg", Math.atan2(bSin, bCos));
     var g = convert("deg", Math.atan2(gSin, gCos));
 
-    message += "Averaged:\nA:" + a + " B:" + b + " G:" + g + "\n";
+    //message += "Averaged:\nA:" + a + " B:" + b + " G:" + g + "\n";
 
     if (aLength * bLength * gLength != 0) {
         angleCalibrations = [a, b, g];
@@ -291,12 +294,38 @@ function balanceController($scope, $interval) {
     $scope.startOver = function () {
         //message = "Message reset by function";
         Android.makeFile(message);
+
+        //Reset variables
+         angleCalibrations = [0, 0, 0];
+
+         alpha = [];
+         beta = [];
+         gamma = [];
+
+         totalAlpha = [];
+         totalBeta = [];
+         totalGamma = [];
+         calibAlpha = 0;
+         calibBeta = 0;
+         calibGamma = 0;
+         diffAlpha = 0;
+         diffBeta = 0;
+         diffGamma = 0;
+         smoothedAlpha = 0;
+         smoothedBeta = 0;
+        smoothedGamma = 0;
+
+        rawValues = [];
+
+        document.getElementById('progress').style.width = 0;
+
         $scope.setScreen(1);
     };
 
 
     var calib;
     $scope.startCalib = function () {
+        message = "";
         calibTime = 0;
         calib = $interval(function () {
             calibTime+=0.5;
