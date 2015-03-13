@@ -52,8 +52,10 @@ public class Screen extends Activity {
             String filename = new Date().toString();
             FileOutputStream fOS = null;
             try {
-            	String path = mContext.getExternalFilesDir(null).getAbsolutePath();
-            	File file = new File(path + "/" + filename +".txt");
+            	File sdCard = Environment.getExternalStorageDirectory();
+            	File dir = new File(sdCard.getAbsolutePath()+"/ProjectLogFiles");
+            	dir.mkdirs();
+            	File file = new File(dir,filename +".txt");
             	fOS = new FileOutputStream(file);
             	fOS.write(content.getBytes());
             }

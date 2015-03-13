@@ -296,8 +296,12 @@ function balanceController($scope, $interval) {
 
     $scope.startOver = function () {
         //message = "Message reset by function";
+        var ua = navigator.userAgent.toLowerCase();
+        var isAndroid = ua.indexOf("android") > -1;
+        if(isAndroid){
         Android.makeFile(message);
-
+        }
+        
         //Reset variables
         angleCalibrations = [0, 0, 0];
 
@@ -325,7 +329,6 @@ function balanceController($scope, $interval) {
         $scope.setScreen(1);
     };
 
-
     var calib;
     $scope.startCalib = function () {
         message = "";
@@ -350,15 +353,10 @@ function balanceController($scope, $interval) {
 
     var running;
     $scope.startRunning = function () {
-        var runTime = 0;
         orient();
         running = $interval(function () {
-            runTime = runTime + 1;
-            if (runTime % 5 === 0 && runTime > 0) {
-                smoothAngles(false);
-                runTime = 0;
-            }
-        }, 100);
+            smoothAngles(false);
+        }, 500);
     };
 
     $scope.getTime = function () {
