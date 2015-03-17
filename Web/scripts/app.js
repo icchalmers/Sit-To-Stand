@@ -7,7 +7,7 @@ var realHeight = 500;
 
 var audio;
 
-var screenNum = 1;
+var screenNum = 0;
 var angleCalibrations = [0, 0, 0];
 
 var alpha = [];
@@ -87,10 +87,11 @@ function orient() {
                 message += " B:" + smoothedBeta;
             }
             if (event.gamma !== null && event.gamma !== 0) {
+                var g = 2*event.gamma;
                 if (smoothedGamma === 0) {
-                    smoothedGamma = event.gamma;
+                    smoothedGamma = g;
                 }
-                smoothedGamma = event.gamma + 0.25 * (smoothedGamma - event.gamma);
+                smoothedGamma = g + 0.25 * (smoothedGamma - g);
                 gamma.push(smoothedGamma);
                 message += " G:" + smoothedGamma;
             }
@@ -154,7 +155,7 @@ function smoothAngles(calibrating) {
         gSin += Math.sin(convert("rad", parseFloat(tempG.pop())));
     }
 
-    var a = (360 + convert("deg", Math.atan2(aSin, aCos))) % 360;
+    var a = convert("deg", Math.atan2(aSin, aCos));
     var b = convert("deg", Math.atan2(bSin, bCos));
     var g = convert("deg", Math.atan2(gSin, gCos));
 
@@ -292,13 +293,20 @@ function balanceController($scope, $interval) {
             return (Math.round(diffGamma * 100) / 100).toFixed(2);
         }
     };
+    
+    $scope.checkBT = function(){
+        var ua = navigator.userAgent.toLowerCase();
+        var isAndroid = ua.indexOf("android") > -1;
+        if(isAndroid && typeof Android !== 'undefined'){
+        Android.makeFile(message);
+        }
+    };
 
 
     $scope.startOver = function () {
-        //message = "Message reset by function";
         var ua = navigator.userAgent.toLowerCase();
         var isAndroid = ua.indexOf("android") > -1;
-        if(isAndroid){
+        if(isAndroid && typeof Android !== 'undefined'){
         Android.makeFile(message);
         }
         

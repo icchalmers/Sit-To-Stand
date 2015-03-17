@@ -15,8 +15,8 @@
 <body onload="setupSound()">
     <div ng-app="" ng-controller="balanceController">
         <div ng-show="isScreen(0)">
-            <button id="checkBT" class="btn btn-primary btn-lg" ng-click="checkBT();">Start Connection</button> 
-            <button id="startProgram" class="btn btn-primary btn-lg" ng-click="setScreen(1);">Start Program</button>        
+            <button id="checkBT" class="btn btn-primary btn-lg btn-block" ng-click="checkBT();" style="font-size:xx-large">Start Connection</button> 
+            <button id="startProgram" class="btn btn-primary btn-lg btn-block" ng-click="setScreen(1);" style="font-size:xx-large">Start Program</button>        
         </div>
         <button id="gobutton" class="btn btn-primary" style="{{getStyle()}}" ng-click="setScreen(2); startCalib();" ng-show="isScreen(1)">Start</button>
 
