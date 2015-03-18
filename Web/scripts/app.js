@@ -87,7 +87,7 @@ function orient() {
                 message += " B:" + smoothedBeta;
             }
             if (event.gamma !== null && event.gamma !== 0) {
-                var g = 2*event.gamma;
+                var g = 2 * event.gamma;
                 if (smoothedGamma === 0) {
                     smoothedGamma = g;
                 }
@@ -171,8 +171,6 @@ function smoothAngles(calibrating) {
             diffAlpha = convert("deg", Math.atan2(Math.sin(convert("rad", angleCalibrations[0] - calibAlpha)), Math.cos(convert("rad", angleCalibrations[0] - calibAlpha))));
             diffBeta = convert("deg", Math.atan2(Math.sin(convert("rad", angleCalibrations[1] - calibBeta)), Math.cos(convert("rad", angleCalibrations[1] - calibBeta))));
             diffGamma = convert("deg", Math.atan2(Math.sin(convert("rad", angleCalibrations[2] - calibGamma)), Math.cos(convert("rad", angleCalibrations[2] - calibGamma))));
-//            diffBeta = angleCalibrations[1] - calibBeta;
-//            diffGamma = angleCalibrations[2] - calibGamma;
         }
     }
 }
@@ -300,7 +298,7 @@ function balanceController($scope, $interval) {
         var ua = navigator.userAgent.toLowerCase();
         var isAndroid = ua.indexOf("android") > -1;
         if(isAndroid && typeof Android !== 'undefined'){
-        Android.makeFile(message);
+            Android.makeFile(message);
         }
     };
 
@@ -364,8 +362,18 @@ function balanceController($scope, $interval) {
     var running;
     $scope.startRunning = function () {
         orient();
+        var color = [];
         running = $interval(function () {
             smoothAngles(false);
+            if(diffBeta > 0){
+                color = [255,0,0];
+            }
+            else{
+                color = [0,0,255];
+            }
+            var colorIntensity = Math.min(1,(Math.abs(diffBeta)/30));
+            color.push(colorIntensity);
+            document.body.style.background = 'rgba(' + color.join(',') + ')';
         }, 500);
     };
 
