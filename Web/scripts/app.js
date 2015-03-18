@@ -169,8 +169,10 @@ function smoothAngles(calibrating) {
             totalGamma.push(g);
         } else {
             diffAlpha = convert("deg", Math.atan2(Math.sin(convert("rad", angleCalibrations[0] - calibAlpha)), Math.cos(convert("rad", angleCalibrations[0] - calibAlpha))));
-            diffBeta = angleCalibrations[1] - calibBeta;
-            diffGamma = angleCalibrations[2] - calibGamma;
+            diffBeta = convert("deg", Math.atan2(Math.sin(convert("rad", angleCalibrations[1] - calibBeta)), Math.cos(convert("rad", angleCalibrations[1] - calibBeta))));
+            diffGamma = convert("deg", Math.atan2(Math.sin(convert("rad", angleCalibrations[2] - calibGamma)), Math.cos(convert("rad", angleCalibrations[2] - calibGamma))));
+//            diffBeta = angleCalibrations[1] - calibBeta;
+//            diffGamma = angleCalibrations[2] - calibGamma;
         }
     }
 }
