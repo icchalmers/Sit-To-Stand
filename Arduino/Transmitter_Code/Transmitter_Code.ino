@@ -1,4 +1,4 @@
-int incomingByte;
+char incomingByte;
 
 //Used to clear buffer in case of multiple input
 void serialFlush(){
@@ -15,8 +15,12 @@ void setup()
 void loop()
 {
   String content = "";
-  Serial.print("ON");
-  delay(1000);
-  Serial.print("OFF");
-  delay(1000);
+
+  while(Serial.available()>0){
+    incomingByte = Serial.read();
+    delay(2);
+    content+= incomingByte;
+  }
+  Serial.print(content);
 }
+
