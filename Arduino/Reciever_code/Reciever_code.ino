@@ -44,11 +44,11 @@ void loop() {
     content+=incomingByte;
   }
 
-  if (content == "H") {
+  if (content == "High") {
     digitalWrite(ledPin, HIGH);
   } 
   // if it's an L (ASCII 76) turn off the LED:
-  if (content == "L") {
+  if (content == "Low") {
     digitalWrite(ledPin, LOW);
   }
 }

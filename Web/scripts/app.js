@@ -294,20 +294,27 @@ function balanceController($scope, $interval) {
         }
     };
     
-    $scope.checkBT = function(){
+    $scope.checkBT = function () {
         var ua = navigator.userAgent.toLowerCase();
         var isAndroid = ua.indexOf("android") > -1;
-        if(isAndroid && typeof Android !== 'undefined'){
-            Android.makeFile(message);
+        if (isAndroid && typeof Android !== 'undefined') {
+            Android.connectBT();
         }
     };
 
+    $scope.sendBT = function (signal) {
+        var ua = navigator.userAgent.toLowerCase();
+        var isAndroid = ua.indexOf("android") > -1;
+        if (isAndroid && typeof Android !== 'undefined') {
+            Android.sendBluetooth(signal);
+        }
+    };
 
     $scope.startOver = function () {
         var ua = navigator.userAgent.toLowerCase();
         var isAndroid = ua.indexOf("android") > -1;
-        if(isAndroid && typeof Android !== 'undefined'){
-        Android.makeFile(message);
+        if (isAndroid && typeof Android !== 'undefined') {
+            Android.makeFile(message);
         }
         
         //Reset variables
@@ -365,13 +372,12 @@ function balanceController($scope, $interval) {
         var color = [];
         running = $interval(function () {
             smoothAngles(false);
-            if(diffBeta > 0){
-                color = [255,0,0];
+            if (diffBeta > 0) {
+                color = [255, 0, 0];
+            } else {
+                color = [0, 0, 255];
             }
-            else{
-                color = [0,0,255];
-            }
-            var colorIntensity = Math.min(1,(Math.abs(diffBeta)/30));
+            var colorIntensity = Math.min(1, (Math.abs(diffBeta) / 30));
             color.push(colorIntensity);
             document.body.style.background = 'rgba(' + color.join(',') + ')';
         }, 500);

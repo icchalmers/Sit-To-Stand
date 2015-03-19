@@ -16,7 +16,15 @@
     <div ng-app="" ng-controller="balanceController">
         <div ng-show="isScreen(0)">
             <button id="checkBT" class="btn btn-primary btn-lg btn-block" ng-click="checkBT();" style="font-size:xx-large">Start Connection</button> 
-            <button id="startProgram" class="btn btn-primary btn-lg btn-block" ng-click="setScreen(1);" style="font-size:xx-large">Start Program</button>        
+            <button id="startProgram" class="btn btn-primary btn-lg btn-block" ng-click="setScreen(1);" style="font-size:xx-large">Start Program</button>      
+            <div class = "row">
+            <div class="col-xs-6">
+                <button id="sendHigh" class="btn btn-primary btn-lg btn-block" ng-click="sendBT('High');" style="font-size:xx-large">High</button>
+                </div>
+                            <div class="col-xs-6">
+                <button id="sendHigh" class="btn btn-primary btn-lg btn-block" ng-click="sendBT('Low');" style="font-size:xx-large">Low</button>
+                </div>
+            </div>
         </div>
         <button id="gobutton" class="btn btn-primary" style="{{getStyle()}}" ng-click="setScreen(2); startCalib();" ng-show="isScreen(1)">Start</button>
 
