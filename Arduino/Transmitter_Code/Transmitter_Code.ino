@@ -1,4 +1,5 @@
 char incomingByte;
+const int ledPin = 13; // the pin that the LED is attached to
 
 //Used to clear buffer in case of multiple input
 void serialFlush(){
@@ -22,5 +23,11 @@ void loop()
     content+= incomingByte;
   }
   Serial.print(content);
+  if(content == "High"){
+    digitalWrite(ledPin,HIGH);
+  }
+  
+  if (content == "Low") {
+    digitalWrite(ledPin, LOW);
+  }
 }
-
