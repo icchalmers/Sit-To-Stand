@@ -19,12 +19,12 @@
  by Tom Igoe and Scott Fitzgerald
  
  This example code is in the public domain.
-
+ 
  http://www.arduino.cc/en/Tutorial/PhysicalPixel
  */
 
 const int ledPin = 13; // the pin that the LED is attached to
-int incomingByte;      // a variable to read incoming serial data into
+char incomingByte;      // a variable to read incoming serial data into
 
 void setup() {
   // initialize serial communication:
@@ -34,17 +34,22 @@ void setup() {
 }
 
 void loop() {
+  String content = "";
   // see if there's incoming serial data:
-  if (Serial.available() > 0) {
+  while (Serial.available() > 0) {
     // read the oldest byte in the serial buffer:
     incomingByte = Serial.read();
     // if it's a capital H (ASCII 72), turn on the LED:
-    if (incomingByte == 'H') {
-      digitalWrite(ledPin, HIGH);
-    } 
-    // if it's an L (ASCII 76) turn off the LED:
-    if (incomingByte == 'L') {
-      digitalWrite(ledPin, LOW);
-    }
+    delay(2);
+    content+=incomingByte;
+  }
+
+  if (content == "ON") {
+    digitalWrite(ledPin, HIGH);
+  } 
+  // if it's an L (ASCII 76) turn off the LED:
+  if (content == "OFF") {
+    digitalWrite(ledPin, LOW);
   }
 }
+
