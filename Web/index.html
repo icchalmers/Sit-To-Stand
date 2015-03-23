@@ -13,8 +13,8 @@
     <script src="angular-1.2.26/angular.js"></script>
 </head>
 <body onload="setupSound()">
-    <div ng-app="" ng-controller="balanceController">
-        <div ng-show="isScreen(0)">
+    <div ng-app="" ng-controller="balanceController" class="full-size">
+        <div ng-show="isScreen(0)" class="centre-vertical">
             <button id="checkBT" class="btn btn-primary btn-lg btn-block" ng-click="checkBT();" style="font-size:xx-large">Start Connection</button> 
             <button id="startProgram" class="btn btn-primary btn-lg btn-block" ng-click="setScreen(1);" style="font-size:xx-large">Start Program</button>      
             <div class = "row">
@@ -26,7 +26,7 @@
                 </div>
             </div>
         </div>
-        <button id="gobutton" class="btn btn-primary" style="{{getStyle()}}" ng-click="setScreen(2); startCalib();" ng-show="isScreen(1)">Start</button>
+        <button id="gobutton" class="btn btn-primary full-size" ng-click="setScreen(2); startCalib();" style="font-size:xx-large" ng-show="isScreen(1)">Start</button>
         <div class="row">
             <div class="col-xs-6" ng-show="isScreen(2)">
                 <p id="time" style="font-size:x-large"></p>

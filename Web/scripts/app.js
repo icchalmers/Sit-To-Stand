@@ -1,9 +1,4 @@
 var calibTime = 0;
-var width = 0;
-var height = 0;
-
-var realWidth = 500;
-var realHeight = 500;
 
 var audio;
 
@@ -31,22 +26,6 @@ var rawValues = [];
 
 //Sent to Android to create file to log values
 var message = "";
-
-
-//Helper methods for controller to use
-function setValues() {
-    "use strict";
-    width = screen.availWidth;
-    height = screen.availHeight;
-
-    if (height > width) {
-        realWidth = height;
-        realHeight = width;
-    } else {
-        realWidth = width;
-        realHeight = height;
-    }
-}
 
 function showTime() {
     "use strict";
@@ -248,11 +227,6 @@ function calibrateValues() {
 //Controller for app set first
 function balanceController($scope, $interval) {
     "use strict";
-    setValues();
-    $scope.getStyle = function () {
-        var s = "width:" + realWidth + "px; height:" + realHeight + "px; font-size:xx-large";
-        return s;
-    };
 
     $scope.isScreen = function (num) {
         return screenNum === num;
