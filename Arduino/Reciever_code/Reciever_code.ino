@@ -38,15 +38,15 @@ void loop() {
     delay(2);
     content+=incomingByte;
   }
-
-  if(content == "High"){
+  if(content.length()>0){
+  if(content == "RIGHT" || content == "HIGH"){
     digitalWrite(ledPin,HIGH);
     myMotor->run(FORWARD);
   }
-  
-  if (content == "Low") {
+  else {
     digitalWrite(ledPin, LOW);
     myMotor->run(RELEASE);
+  }
   }
 }
 

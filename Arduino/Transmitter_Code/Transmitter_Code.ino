@@ -48,14 +48,15 @@ void loop()
     content+= incomingByte;
   }
   Serial.print(content);
-  if(content == "High"){
+  if(content.length()>0){
+  if(content == "LEFT" || content == "HIGH"){
     digitalWrite(ledPin,HIGH);
     myMotor->run(FORWARD);
   }
-  
-  if (content == "Low") {
+  else {
     digitalWrite(ledPin, LOW);
     myMotor->run(RELEASE);
+  }
   }
 }
 

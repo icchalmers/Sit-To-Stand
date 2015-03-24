@@ -351,10 +351,13 @@ function balanceController($scope, $interval) {
                 color = [0, 0, 255];
             }
             var colorIntensity = Math.min(1, (Math.abs(diffBeta) / 30));
-            if (colorIntensity < 1) {
-                $scope.sendBT("Low");
-            } else {
-                $scope.sendBT("High");
+            if (diffBeta>30) {
+                $scope.sendBT("LEFT");
+            } else if(diffBeta<-30) {
+                $scope.sendBT("RIGHT");
+            }
+            else{
+                $scope.sendBT("CENTRED");
             }
             color.push(colorIntensity);
             document.body.style.background = 'rgba(' + color.join(',') + ')';
