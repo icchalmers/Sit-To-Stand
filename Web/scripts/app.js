@@ -326,7 +326,7 @@ function balanceController($scope, $interval) {
             calibTime = calibTime + 1;
             document.getElementById('progress').style.width = Math.ceil((calibTime * 10) / 15) + "%";
             showTime();
-            if (calibTime % 5 === 0 && calibTime > 0) {
+            if (calibTime % 1 === 0 && calibTime > 0) {
                 smoothAngles(true);
             }
             if (calibTime > 150) {
@@ -358,7 +358,7 @@ function balanceController($scope, $interval) {
             }
             color.push(colorIntensity);
             document.body.style.background = 'rgba(' + color.join(',') + ')';
-        }, 500);
+        }, 100);
     };
 
     $scope.getTime = function () {
