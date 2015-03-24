@@ -9,8 +9,10 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 Adafruit_DCMotor *myMotor = AFMS.getMotor(1);
 
 
-const int ledPin = 13; // the pin that the LED is attached to
 char incomingByte;      // a variable to read incoming serial data into
+const int ledPin = 13; // the pin that the LED is attached to
+const int buffAngle = 10; //angle allowed before vibration starts
+const int strength = 5; //multiplier for ramping up speed when vibrating
 
 void setup() {
   // initialize serial communication:
@@ -38,14 +40,33 @@ void loop() {
     delay(2);
     content+=incomingByte;
   }
+  
   if(content.length()>0){
-  if(content == "RIGHT" || content == "HIGH"){
+  if(content == "HIGH"){
     digitalWrite(ledPin,HIGH);
     myMotor->run(FORWARD);
   }
-  else {
+  else if(content =="LOW") {
     digitalWrite(ledPin, LOW);
     myMotor->run(RELEASE);
+  }
+  else{
+      if(content.charAt(0)=='R'){
+        //Convert string to int and take away buffer angle
+      int s = content.substring(1).toInt()-buffAngle;
+      //Multiply speed by vibration magnitude
+      s = s*strength;
+      if(s<0){
+        myMotor->run(RELEASE);
+      }
+      else{
+        myMotor->setSpeed(s);
+        myMotor->run(FORWARD);
+      }
+  }
+  else{
+    myMotor->run(RELEASE);
+  }
   }
   }
 }

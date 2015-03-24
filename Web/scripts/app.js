@@ -27,6 +27,9 @@ var rawValues = [];
 //Sent to Android to create file to log values
 var message = "";
 
+//Sent to Android to send message to Arduino
+var vibration = "";
+
 function showTime() {
     "use strict";
     var t = "Time elapsed is: " + Math.floor(calibTime / 10) + "s\n";
@@ -346,22 +349,18 @@ function balanceController($scope, $interval) {
         running = $interval(function () {
             smoothAngles(false);
             if (diffBeta > 0) {
+                vibration += "R";
                 color = [255, 0, 0];
             } else {
+                vibration += "L";
                 color = [0, 0, 255];
             }
+            vibration += Math.abs(Math.round(diffBeta));
+            $scope.sendBT(vibration);
             var colorIntensity = Math.min(1, (Math.abs(diffBeta) / 30));
-            if (diffBeta>30) {
-                $scope.sendBT("LEFT");
-            } else if(diffBeta<-30) {
-                $scope.sendBT("RIGHT");
-            }
-            else{
-                $scope.sendBT("CENTRED");
-            }
             color.push(colorIntensity);
             document.body.style.background = 'rgba(' + color.join(',') + ')';
-        }, 100);
+        }, 300);
     };
 
     $scope.getTime = function () {
