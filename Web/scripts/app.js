@@ -227,7 +227,6 @@ function calibrateValues() {
 //Controller for app set first
 function balanceController($scope, $interval) {
     "use strict";
-
     $scope.isScreen = function (num) {
         return screenNum === num;
     };
@@ -352,6 +351,11 @@ function balanceController($scope, $interval) {
                 color = [0, 0, 255];
             }
             var colorIntensity = Math.min(1, (Math.abs(diffBeta) / 30));
+            if (colorIntensity < 1) {
+                $scope.sendBT("Low");
+            } else {
+                $scope.sendBT("High");
+            }
             color.push(colorIntensity);
             document.body.style.background = 'rgba(' + color.join(',') + ')';
         }, 500);
