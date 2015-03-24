@@ -42,7 +42,6 @@ void setup()
 void loop()
 {
   String content = "";
-  serialFlush();
   while(Serial.available()>0){
     incomingByte = Serial.read();
     delay(2);
@@ -63,7 +62,6 @@ void loop()
       if(content.charAt(0)=='L'){
         String num = content.substring(1);
         //Convert string to int and take away buffer angle
-        Serial.print("Substring is: " + num);
       int s = num.toInt()-buffAngle;
       //Serial.print(s);
       //Multiply speed by vibration magnitude
