@@ -2,7 +2,7 @@ var calibTime = 0;
 
 var audio;
 
-var screenNum = 0;
+var screenNum = 1;
 var angleCalibrations = [0, 0, 0];
 
 var alpha = [];
@@ -23,6 +23,11 @@ var smoothedBeta = 0;
 var smoothedGamma = 0;
 
 var rawValues = [];
+
+var connected = false;
+
+var axisFlip = false;
+var lastValue = 0;
 
 //Sent to Android to create file to log values
 var message = "";
@@ -48,6 +53,15 @@ function updateBar() {
     showTime();
 }
 
+function startBT() {
+    "use strict";
+    var ua = navigator.userAgent.toLowerCase();
+    var isAndroid = ua.indexOf("android") > -1;
+    if (isAndroid && typeof Android !== 'undefined') {
+        Android.connectBT();
+    }
+}
+
 function orient() {
     "use strict";
     var handler = function (event) {
@@ -64,19 +78,41 @@ function orient() {
                 if (smoothedBeta === 0) {
                     smoothedBeta = event.beta;
                 }
-                smoothedBeta = event.beta + 0.25 * (smoothedBeta - event.beta);
-                beta.push(smoothedBeta);
-                message += " B:" + smoothedBeta;
+                smoothedBeta = event.beta;
+//                    + 0.25 * (smoothedBeta - event.beta);
+                message += "B:" + smoothedBeta;
             }
             if (event.gamma !== null && event.gamma !== 0) {
                 var g = 2 * event.gamma;
                 if (smoothedGamma === 0) {
                     smoothedGamma = g;
                 }
-                smoothedGamma = g + 0.25 * (smoothedGamma - g);
+                smoothedGamma = g;
+//                    + 0.25 * (smoothedGamma - g);
                 gamma.push(smoothedGamma);
-                message += " G:" + smoothedGamma;
+                
             }
+            
+            //Logic to check for gamma flipping over axis
+            if (Math.abs(smoothedGamma - lastValue) > 180) {
+                axisFlip = !axisFlip;
+            } else {
+                if (axisFlip) {
+                    smoothedBeta = 180 - smoothedBeta;
+                }
+                beta.push(smoothedBeta);
+                message += " Corrected B:" + smoothedBeta;
+            }
+            lastValue = smoothedGamma;
+            
+            
+            
+            
+           
+            message += " G:" + smoothedGamma;
+            
+            message += " Flipped:" + axisFlip;
+            
             var date = new Date();
             var hours = date.getHours().toString();
             var mins = date.getMinutes().toString();
@@ -271,11 +307,8 @@ function balanceController($scope, $interval) {
     };
     
     $scope.checkBT = function () {
-        var ua = navigator.userAgent.toLowerCase();
-        var isAndroid = ua.indexOf("android") > -1;
-        if (isAndroid && typeof Android !== 'undefined') {
-            Android.connectBT();
-        }
+        startBT();
+        $scope.setScreen(1);
     };
 
     $scope.sendBT = function (signal) {
@@ -286,6 +319,7 @@ function balanceController($scope, $interval) {
         }
     };
 
+    var running;
     $scope.startOver = function () {
         var ua = navigator.userAgent.toLowerCase();
         var isAndroid = ua.indexOf("android") > -1;
@@ -316,12 +350,20 @@ function balanceController($scope, $interval) {
         rawValues = [];
 
         document.getElementById('progress').style.width = 0;
+        document.body.style.background = 'white';
+        
 
+        $interval.cancel(running);
+        $scope.sendBT("LOW");
         $scope.setScreen(1);
     };
 
     var calib;
     $scope.startCalib = function () {
+        if(!connected){
+        startBT();
+            connected=true;
+        }
         message = "";
         calibTime = 0;
         orient();
@@ -342,7 +384,7 @@ function balanceController($scope, $interval) {
         }, 100);
     };
 
-    var running;
+    
     $scope.startRunning = function () {
         orient();
         var color = [];
@@ -360,12 +402,13 @@ function balanceController($scope, $interval) {
             vibration="";
             var colorIntensity = Math.min(1, (Math.abs(diffBeta) / 30));
             color.push(colorIntensity);
-            document.body.style.background = 'rgba(' + color.join(',') + ')';
-        }, 300);
+            //document.body.style.background = 'rgba(' + color.join(',') + ')';
+        }, 100);
     };
 
     $scope.getTime = function () {
         var today = new Date();
         return today.toGMTString();
     };
+    
 }
