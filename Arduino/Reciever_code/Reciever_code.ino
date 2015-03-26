@@ -37,13 +37,14 @@ void loop() {
     // read the oldest byte in the serial buffer:
     incomingByte = Serial.read();
     // if it's a capital H (ASCII 72), turn on the LED:
-    delay(2);
+    delay(3);
     content+=incomingByte;
   }
   
   if(content.length()>0){
   if(content == "HIGH"){
     digitalWrite(ledPin,HIGH);
+    myMotor->setSpeed(150);
     myMotor->run(FORWARD);
   }
   else if(content =="LOW") {
@@ -52,10 +53,12 @@ void loop() {
   }
   else{
       if(content.charAt(0)=='R'){
+        String num = content.substring(1);
         //Convert string to int and take away buffer angle
-      int s = content.substring(1).toInt()-buffAngle;
+      int s = num.toInt()-buffAngle;
       //Multiply speed by vibration magnitude
       s = s*strength;
+      s=min(s,255);
       if(s<0){
         myMotor->run(RELEASE);
       }
@@ -64,7 +67,7 @@ void loop() {
         myMotor->run(FORWARD);
       }
   }
-  else{
+  else if(content.charAt(0)=='L'){
     myMotor->run(RELEASE);
   }
   }

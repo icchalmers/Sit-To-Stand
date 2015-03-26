@@ -44,13 +44,14 @@ void loop()
   String content = "";
   while(Serial.available()>0){
     incomingByte = Serial.read();
-    delay(2);
+    delay(3);
     content+= incomingByte;
   }
   Serial.print(content);
   if(content.length()>0){
   Serial.print("\n");
   if(content == "HIGH"){
+    myMotor->setSpeed(150);
     digitalWrite(ledPin,HIGH);
     myMotor->run(FORWARD);
   }
@@ -66,6 +67,7 @@ void loop()
       //Serial.print(s);
       //Multiply speed by vibration magnitude
       s = s*strength;
+      s=min(s,255);
       if(s<0){
         myMotor->run(RELEASE);
       }
@@ -74,11 +76,11 @@ void loop()
         myMotor->run(FORWARD);
       }
   }
-  else{
+  else if(content.charAt(0)=='R'){
     myMotor->run(RELEASE);
   }
   }
 }
-content = "";
+serialFlush();
 }
 
