@@ -360,9 +360,9 @@ function balanceController($scope, $interval) {
 
     var calib;
     $scope.startCalib = function () {
-        if(!connected){
-        startBT();
-            connected=true;
+        if (!connected) {
+            startBT();
+            connected = true;
         }
         message = "";
         calibTime = 0;
@@ -399,7 +399,7 @@ function balanceController($scope, $interval) {
             }
             vibration += Math.abs(Math.round(diffBeta));
             $scope.sendBT(vibration);
-            vibration="";
+            vibration = "";
             var colorIntensity = Math.min(1, (Math.abs(diffBeta) / 30));
             color.push(colorIntensity);
             //document.body.style.background = 'rgba(' + color.join(',') + ')';
