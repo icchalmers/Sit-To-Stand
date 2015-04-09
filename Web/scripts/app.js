@@ -403,7 +403,7 @@ function balanceController($scope, $interval) {
             var colorIntensity = Math.min(1, (Math.abs(diffBeta) / 30));
             color.push(colorIntensity);
             //document.body.style.background = 'rgba(' + color.join(',') + ')';
-        }, 100);
+        }, 150);
     };
 
     $scope.getTime = function () {

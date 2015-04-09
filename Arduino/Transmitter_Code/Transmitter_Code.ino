@@ -6,12 +6,12 @@
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
 
 // Select which 'port' M1, M2, M3 or M4. In this case, M1
-Adafruit_DCMotor *myMotor = AFMS.getMotor(1);
+Adafruit_DCMotor *myMotor = AFMS.getMotor(4);
 
 
 char incomingByte;
 const int ledPin = 13; // the pin that the LED is attached to
-const int buffAngle = 10; //angle allowed before vibration starts
+const int buffAngle = 2; //angle allowed before vibration starts
 const int strength = 5; //multiplier for ramping up speed when vibrating
 
 
@@ -44,7 +44,7 @@ void loop()
   String content = "";
   while(Serial.available()>0){
     incomingByte = Serial.read();
-    delay(3);
+    delay(2);
     content+= incomingByte;
   }
   Serial.print(content);
@@ -67,7 +67,7 @@ void loop()
       //Serial.print(s);
       //Multiply speed by vibration magnitude
       s = s*strength;
-      s=min(s,255);
+      s=min(s,200);
       if(s<0){
         myMotor->run(RELEASE);
       }
@@ -81,6 +81,6 @@ void loop()
   }
   }
 }
-serialFlush();
+//serialFlush();
 }
 

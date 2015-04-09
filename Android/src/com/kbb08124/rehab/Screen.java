@@ -39,6 +39,13 @@ public class Screen extends Activity {
 				"Android");
 	}
 
+	@Override
+	protected void onDestroy() {
+		JavaScriptInterface jsi = new JavaScriptInterface(this);
+		jsi.sendBluetooth("LOW");
+		super.onDestroy();
+	}
+
 	public class JavaScriptInterface {
 		private final static String address = "98:76:B6:00:35:79";
 		private final UUID MY_UUID = UUID.randomUUID();
