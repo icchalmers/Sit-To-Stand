@@ -20,7 +20,7 @@
 #include <RFduinoBLE.h>
 
 // Module variables - useful for quick changes between boards
-#define MODULE_NAME "VibOLD" // Must be a max of 15 bytes long
+#define MODULE_NAME "Vib001" // Must be a max of 15 bytes long
 #define ADVERTISEMENT_INTERVAL 500 // in milliseconds
 #define TX_POWER_LEVEL 0  // -20dbM to +4 dBm. Must be a multiple of 4
 #define MINIMUM_ON_VALUE 15 // the motor used needs a value of at least 15
