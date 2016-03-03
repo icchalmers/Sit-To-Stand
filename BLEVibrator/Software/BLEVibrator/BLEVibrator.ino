@@ -5,7 +5,11 @@
 *     RFDuino sketch to drive a vibration motor
 * 
 * Usage : 
-*     
+*     Connect to the device. It will have a service UUID with "2220".
+*     Characteristic "2221" is for RFDuino to controller i.e. read. It is unused in this sketch.
+*     Characteristic "2222" is for controller to RFDuino i.e. write. Writing an unisgned 8-bit 
+*         value to this charactersitic will control the motor. 0 is off, 255 is fully on.
+*     Characteristic "2223" will force a disconnect if written to.
 * 
 * AUTHOR : Iain Chalmers
 *
