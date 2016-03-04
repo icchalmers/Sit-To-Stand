@@ -1,4 +1,4 @@
-package com.kbb08124.rehab;
+package cc.chalmers.sittostand;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,7 +34,7 @@ public class Screen extends Activity {
 		WebSettings webSettings = myWebView.getSettings();
 		webSettings.setJavaScriptEnabled(true);
 		webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-		myWebView.loadUrl("file:///android_asset/index.html");
+		myWebView.loadUrl("file:///android_asset/www/index.html");
 		myWebView.addJavascriptInterface(new JavaScriptInterface(this),
 				"Android");
 	}
