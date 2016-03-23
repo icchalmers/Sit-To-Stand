@@ -75,7 +75,7 @@ public class GattManager {
             protected synchronized Void doInBackground(Void... voids) {
                 try {
                     Log.v(TAG, "Starting to do a background timeout");
-                    wait(operation.getTimoutInMillis());
+                    wait(operation.getTimeoutInMillis());
                 } catch (InterruptedException e) {
                     Log.v(TAG, "was interrupted out of the timeout");
                 }
@@ -162,6 +162,7 @@ public class GattManager {
     }
 
     public void queue(GattOperationBundle bundle) {
+
         for(GattOperation operation : bundle.getOperations()) {
             queue(operation);
         }
