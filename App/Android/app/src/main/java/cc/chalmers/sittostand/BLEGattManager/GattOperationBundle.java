@@ -1,6 +1,6 @@
 package cc.chalmers.sittostand.BLEGattManager;
 
-import com.example.android.bluetoothlegatt.BLEGattManager.operations.GattOperation;
+import cc.chalmers.sittostand.BLEGattManager.operations.GattOperation;
 
 import java.util.ArrayList;
 
