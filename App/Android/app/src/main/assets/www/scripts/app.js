@@ -2,7 +2,7 @@ var calibTime = 0;
 
 var audio;
 
-var screenNum = 1;
+var screenNum = 0;
 var angleCalibrations = [0, 0, 0];
 
 var alpha = [];
