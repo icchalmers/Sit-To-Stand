@@ -3,8 +3,7 @@ package cc.chalmers.sittostand.BLEGattManager.operations;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
-
-import org.droidparts.util.L;
+import android.util.Log;
 
 import java.util.UUID;
 
@@ -23,7 +22,7 @@ public class GattCharacteristicWriteOperation extends GattOperation {
 
     @Override
     public void execute(BluetoothGatt gatt) {
-        L.d("writing " + mValue[0] + " to " + mCharacteristic);
+        Log.d(TAG, "writing " + mValue[0] + " to " + mCharacteristic);
         BluetoothGattCharacteristic characteristic = gatt.getService(mService).getCharacteristic(mCharacteristic);
         characteristic.setValue(mValue);
         gatt.writeCharacteristic(characteristic);

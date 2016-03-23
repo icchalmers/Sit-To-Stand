@@ -3,9 +3,11 @@ package cc.chalmers.sittostand.BLEGattManager.operations;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 
-import com.example.android.bluetoothlegatt.BLEGattManager.GattOperationBundle;
+import cc.chalmers.sittostand.BLEGattManager.GattOperationBundle;
 
 public abstract class GattOperation {
+
+    protected final static String TAG = "GattOperation";
 
     private static final int DEFAULT_TIMEOUT_IN_MILLIS = 10000;
     private BluetoothDevice mDevice;

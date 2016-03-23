@@ -1,8 +1,8 @@
 package cc.chalmers.sittostand.BLEGattManager;
 
-import java.util.ArrayList;
-
 import com.example.android.bluetoothlegatt.BLEGattManager.operations.GattOperation;
+
+import java.util.ArrayList;
 
 public class GattOperationBundle {
     final ArrayList<GattOperation> operations;
