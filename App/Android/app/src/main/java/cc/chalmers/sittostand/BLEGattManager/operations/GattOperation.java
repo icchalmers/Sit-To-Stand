@@ -23,7 +23,7 @@ public abstract class GattOperation {
         return mDevice;
     }
 
-    public int getTimoutInMillis() {
+    public int getTimeoutInMillis() {
         return DEFAULT_TIMEOUT_IN_MILLIS;
     }
 
