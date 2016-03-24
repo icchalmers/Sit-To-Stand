@@ -19,7 +19,6 @@ package cc.chalmers.sittostand;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +32,7 @@ import cc.chalmers.sittostand.BLEGattManager.operations.GattCharacteristicWriteO
 import cc.chalmers.sittostand.BLEGattManager.operations.GattConnectOperation;
 import cc.chalmers.sittostand.BLEGattManager.operations.GattDisconnectOperation;
 import cc.chalmers.sittostand.BLEGattManager.operations.GattOperation;
+import cc.chalmers.sittostand.BLEGattManager.operations.GattServiceDiscoveryOperation;
 
 import java.util.UUID;
 
@@ -140,12 +140,16 @@ public class BluetoothLeService extends Service {
             Log.w(TAG, "Device not found.  Unable to connect to right device.");
             return false;
         }
-        GattOperationBundle bundle = new GattOperationBundle();
-        bundle.addOperation(new GattConnectOperation(mBluetoothDeviceLeft));
-        mGattManager.queue(bundle);
-//        GattOperationBundle bundle2 = new GattOperationBundle();
-//        bundle.addOperation(new GattConnectOperation(mBluetoothDeviceRight));
-//        mGattManager.queue(bundle2);
+        Log.d(TAG, "Requesting connection to both motors");
+
+        GattOperation connectLeft = new GattConnectOperation(mBluetoothDeviceLeft);
+        mGattManager.queue(connectLeft);
+        GattOperation connectRight = new GattConnectOperation(mBluetoothDeviceRight);
+        mGattManager.queue(connectRight);
+        GattOperation discoverServicesLeft = new GattServiceDiscoveryOperation(mBluetoothDeviceLeft);
+        mGattManager.queue(discoverServicesLeft);
+        GattOperation discoverServicesRight = new GattServiceDiscoveryOperation(mBluetoothDeviceRight);
+        mGattManager.queue(discoverServicesRight);
         mConnectionState = STATE_CONNECTING;
         return true;
     }
@@ -163,10 +167,10 @@ public class BluetoothLeService extends Service {
             return;
         }
 
-        GattOperationBundle bundle = new GattOperationBundle();
-        bundle.addOperation(new GattDisconnectOperation(mBluetoothDeviceLeft));
-        bundle.addOperation(new GattDisconnectOperation(mBluetoothDeviceRight));
-        mGattManager.queue(bundle);
+        GattOperation disconnectLeft = new GattDisconnectOperation(mBluetoothDeviceLeft);
+        mGattManager.queue(disconnectLeft);
+        GattOperation disconnectRight = new GattDisconnectOperation(mBluetoothDeviceRight);
+        mGattManager.queue(disconnectRight);
     }
 
     /**
@@ -184,21 +188,20 @@ public class BluetoothLeService extends Service {
             Log.w(TAG, "BluetoothAdapter not initialized");
             return;
         }
-        GattOperationBundle bundle = new GattOperationBundle();
+        //GattOperationBundle bundle = new GattOperationBundle();
         byte[] temp = new byte[]{(byte)value};
-        bundle.addOperation(new GattCharacteristicWriteOperation(
+        GattOperation writeLeft = new GattCharacteristicWriteOperation(
                 mBluetoothDeviceLeft,
                 UUID.fromString("00002220-0000-1000-8000-00805f9b34fb"),
                 UUID.fromString("00002222-0000-1000-8000-00805f9b34fb"),
-                temp));
-        //mGattManager.queue(bundle);
+                temp);
+        mGattManager.queue(writeLeft);
 
-        //bundle = new GattOperationBundle();
-        bundle.addOperation(new GattCharacteristicWriteOperation(
+        GattOperation writeRight = new GattCharacteristicWriteOperation(
                 mBluetoothDeviceRight,
                 UUID.fromString("00002220-0000-1000-8000-00805f9b34fb"),
                 UUID.fromString("00002222-0000-1000-8000-00805f9b34fb"),
-                temp));
-        mGattManager.queue(bundle);
+                temp);
+        mGattManager.queue(writeRight);
     }
 }

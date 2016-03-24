@@ -173,8 +173,7 @@ public class MotorScanActivity extends ListActivity {
             intent.putExtra(MotorControlActivity.EXTRAS_DEVICE2_NAME, secondDevice.getName());
             intent.putExtra(MotorControlActivity.EXTRAS_DEVICE2_ADDRESS, secondDevice.getAddress());
             if (mScanning) {
-                mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                mScanning = false;
+                scanLeDevice(false);
             }
             startActivity(intent);
         }

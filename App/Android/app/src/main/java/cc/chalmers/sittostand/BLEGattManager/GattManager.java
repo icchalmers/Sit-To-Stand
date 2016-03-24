@@ -59,6 +59,9 @@ public class GattManager {
         if( mQueue.size() == 0) {
             Log.v(TAG, "Queue empty, drive loop stopped.");
             mCurrentOperation = null;
+            if(mCurrentOperationTimeout != null) {
+                mCurrentOperationTimeout.cancel(true);
+            }
             return;
         }
 
@@ -96,6 +99,7 @@ public class GattManager {
         }.execute();
 
         final BluetoothDevice device = operation.getDevice();
+
         if(mGatts.containsKey(device.getAddress())) {
             execute(mGatts.get(device.getAddress()), operation);
         } else {
@@ -106,16 +110,23 @@ public class GattManager {
 
                     EventBus.postEvent(TRIGGER_CONNECTION_STATE_CHANGED,
                             new ConnectionStateChangedBundle(
-                                    device.getAddress(),
+                                    gatt.getDevice().getAddress(),
+//                                    device.getAddress(),
                                     newState));
 
                     if (newState == BluetoothProfile.STATE_CONNECTED) {
-                        Log.i(TAG, "Gatt connected to device " + device.getAddress());
-                        mGatts.put(device.getAddress(), gatt);
-                        gatt.discoverServices();
+//                        Log.i(TAG, "Gatt connected to device " + device.getAddress());
+                        Log.i(TAG, "Gatt connected to device " + gatt.getDevice().getAddress());
+                        mGatts.put(gatt.getDevice().getAddress(), gatt);
+//                        mGatts.put(device.getAddress(), gatt);
+//                        gatt.discoverServices();
+                        setCurrentOperation(null);
+                        drive();
                     } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+//                        Log.i(TAG, "Disconnected from gatt server " + device.getAddress() + ", newState: " + newState);
                         Log.i(TAG, "Disconnected from gatt server " + device.getAddress() + ", newState: " + newState);
-                        mGatts.remove(device.getAddress());
+//                        mGatts.remove(device.getAddress());
+                        mGatts.remove(gatt.getDevice().getAddress());
                         setCurrentOperation(null);
                         gatt.close();
                         drive();
@@ -127,7 +138,9 @@ public class GattManager {
                 public void onServicesDiscovered(BluetoothGatt gatt, int status) {
                     super.onServicesDiscovered(gatt, status);
                     Log.d(TAG, "services discovered, status: " + status);
-                    execute(gatt, operation);
+                    //execute(gatt, operation);
+                    setCurrentOperation(null);
+                    drive();
                 }
 
 
