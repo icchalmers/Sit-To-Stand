@@ -5,11 +5,19 @@ import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.ParcelUuid;
+import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +29,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.jar.Manifest;
+
+import static java.util.jar.Manifest.*;
 
 /**
  * Activity for scanning and displaying available Bluetooth LE devices.
@@ -28,6 +41,7 @@ import java.util.ArrayList;
 public class MotorScanActivity extends ListActivity {
     private LeDeviceListAdapter mLeDeviceListAdapter;
     private BluetoothAdapter mBluetoothAdapter;
+    private BluetoothLeScanner scanner;
     private boolean mScanning;
     private Handler mHandler;
     private static boolean firstMotorSelected = false;
@@ -55,12 +69,40 @@ public class MotorScanActivity extends ListActivity {
         final BluetoothManager bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
+        scanner = mBluetoothAdapter.getBluetoothLeScanner();
 
         // Checks if Bluetooth is supported on the device.
         if (mBluetoothAdapter == null) {
             Toast.makeText(this, "Bluetooth not supported!", Toast.LENGTH_SHORT).show();
             finish();
             return;
+        }
+        checkLocationPermissions();
+    }
+
+    private final int PERMISSION_LOCATION_REQUEST_CODE = 1;
+    private void checkLocationPermissions() {
+        if (Build.VERSION.SDK_INT >= 23){
+            int hasLocationPermission = checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION);
+            if( hasLocationPermission != PackageManager.PERMISSION_GRANTED) {
+                this.requestPermissions(
+                        new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                        PERMISSION_LOCATION_REQUEST_CODE);
+            } else {
+                scanLeDevice(true);
+            }
+        } else {
+            scanLeDevice(true);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            scanLeDevice(true);
+        } else {
+            Toast.makeText(this,"NEED LOCATION PERMISSIONS", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 
@@ -135,22 +177,30 @@ public class MotorScanActivity extends ListActivity {
     }
 
     private void scanLeDevice(final boolean enable) {
+
         if (enable) {
             // Stops scanning after a pre-defined scan period.
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     mScanning = false;
-                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                    ScanSettings settings = new ScanSettings.Builder()
+                            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build();
+                    ScanFilter filter = new ScanFilter.Builder()
+                            .setServiceUuid(ParcelUuid.fromString(RFDuinoGATTServices.RFDUINO_SERVICE))
+                            .build();
+                    List<ScanFilter> filterList = new ArrayList<>();
+                    filterList.add(filter);
+                    scanner.startScan(filterList, settings, mLeScanCallback);
                     invalidateOptionsMenu();
                 }
             }, SCAN_PERIOD);
 
             mScanning = true;
-            mBluetoothAdapter.startLeScan(mLeScanCallback);
+            scanner.stopScan(mLeScanCallback);
         } else {
             mScanning = false;
-            mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            scanner.stopScan(mLeScanCallback);
         }
         invalidateOptionsMenu();
     }
@@ -253,20 +303,18 @@ public class MotorScanActivity extends ListActivity {
     }
 
     // Device scan callback.
-    private BluetoothAdapter.LeScanCallback mLeScanCallback =
-            new BluetoothAdapter.LeScanCallback() {
-
-                @Override
-                public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mLeDeviceListAdapter.addDevice(device);
-                            mLeDeviceListAdapter.notifyDataSetChanged();
-                        }
-                    });
-                }
-            };
+    private ScanCallback mLeScanCallback = new ScanCallback() {
+            @Override
+            public void onScanResult(int callbackType, final ScanResult result) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mLeDeviceListAdapter.addDevice(result.getDevice());
+                        mLeDeviceListAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        };
 
     static class ViewHolder {
         TextView deviceName;

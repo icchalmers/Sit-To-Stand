@@ -3,7 +3,6 @@ package cc.chalmers.sittostand;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -16,13 +15,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ExpandableListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+
 
 /**
  * For a set of BLEVibrators this activity allows you to connect and test the motors and assign to
@@ -121,7 +118,8 @@ public class MotorControlActivity extends Activity {
         motorControl.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//                mBluetoothLeService.writeCustomCharacteristic(progress);
+                mBluetoothLeService.writeMotor("left", progress);
+                mBluetoothLeService.writeMotor("right", progress);
             }
 
             @Override
@@ -131,7 +129,8 @@ public class MotorControlActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                mBluetoothLeService.writeCustomCharacteristic(seekBar.getProgress());
+                mBluetoothLeService.writeMotor("left", seekBar.getProgress());
+                mBluetoothLeService.writeMotor("right", seekBar.getProgress());
             }
         });
 
@@ -219,7 +218,9 @@ public class MotorControlActivity extends Activity {
 
     public void disableMotors(View v){
         if(mBluetoothLeService != null) {
-            mBluetoothLeService.writeCustomCharacteristic(0);
+            mBluetoothLeService.writeMotor("left", 0);
+            mBluetoothLeService.writeMotor("right", 0);
+            mBluetoothLeService.writeMotor("right", 0);
         }
     }
 

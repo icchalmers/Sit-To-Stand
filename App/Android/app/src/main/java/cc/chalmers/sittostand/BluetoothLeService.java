@@ -19,22 +19,21 @@ package cc.chalmers.sittostand;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
-import cc.chalmers.sittostand.BLEGattManager.GattManager;
-import cc.chalmers.sittostand.BLEGattManager.GattOperationBundle;
-import cc.chalmers.sittostand.BLEGattManager.operations.GattCharacteristicWriteOperation;
-import cc.chalmers.sittostand.BLEGattManager.operations.GattConnectOperation;
-import cc.chalmers.sittostand.BLEGattManager.operations.GattDisconnectOperation;
-import cc.chalmers.sittostand.BLEGattManager.operations.GattOperation;
-import cc.chalmers.sittostand.BLEGattManager.operations.GattServiceDiscoveryOperation;
-
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Service for managing connection and data communication with a GATT server hosted on a
@@ -47,13 +46,39 @@ public class BluetoothLeService extends Service {
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothDevice mBluetoothDeviceLeft;
     private BluetoothDevice mBluetoothDeviceRight;
-    private GattManager mGattManager = new GattManager();
+    private BluetoothGatt mBluetoothGattLeft;
+    private BluetoothGatt mBluetoothGattRight;
+    private BluetoothGattCharacteristic mCharacteristicLeft;
+    private BluetoothGattCharacteristic mCharacteristicRight;
 
-    private int mConnectionState = STATE_DISCONNECTED;
 
-    private static final int STATE_DISCONNECTED = 0;
-    private static final int STATE_CONNECTING = 1;
-    private static final int STATE_CONNECTED = 2;
+    private ConcurrentLinkedQueue<GattCharacteristicWriteOperation> mQueue;
+    private ConcurrentHashMap<String, BluetoothGatt> mGatts;
+    private AsyncTask<Void, Void, Void> mCurrentOperationTimeout;
+    private static boolean BLEBusy;
+    private GattCharacteristicWriteOperation mCurrentOperation;
+    private GattCharacteristicWriteOperation mCurrentLeftOperation;
+    private GattCharacteristicWriteOperation mCurrentRightOperation;
+
+    public enum State {
+        UNKNOWN,
+        IDLE,
+        CONNECTING_LEFT,
+        CONNECTED_LEFT,
+        CONNECTING_RIGHT,
+        CONNECTED_RIGHT,
+        DISCOVERING_LEFT,
+        DISCOVERED_LEFT,
+        DISCOVERING_RIGHT,
+        DISCOVERED_RIGHT,
+        INITIAL_WRITE_LEFT,
+        INITIAL_WRITE_RIGHT,
+        READY,
+        DISCONNECTING,
+        RESET
+    }
+    private State mConnectionState = State.UNKNOWN;
+
 
     public final static String ACTION_GATT_CONNECTED =
             "com.example.bluetooth.le.ACTION_GATT_CONNECTED";
@@ -109,14 +134,133 @@ public class BluetoothLeService extends Service {
             Log.e(TAG, "Unable to obtain a BluetoothAdapter.");
             return false;
         }
-
+        mQueue = new ConcurrentLinkedQueue<>();
+        mGatts = new ConcurrentHashMap<>();
+        BLEBusy = false;
+        mConnectionState = State.IDLE;
         return true;
     }
 
+    private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
+        @Override
+        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
+                if (mConnectionState == State.CONNECTING_LEFT) {
+                    Log.i(TAG, "Connected left motor " + gatt.getDevice().getAddress());
+                    mBluetoothGattLeft = gatt;
+                    updateState(State.CONNECTED_LEFT);
+                } else if(mConnectionState == State.CONNECTING_RIGHT) {
+                    Log.i(TAG, "Connected right motor " + gatt.getDevice().getAddress());
+                    mBluetoothGattRight = gatt;
+                    updateState(State.CONNECTED_RIGHT);
+                } else {
+                    Log.e(TAG, "PANIC! Unknown connection made");
+                    updateState(State.UNKNOWN);
+                }
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                BluetoothDevice device = gatt.getDevice();
+                Log.e(TAG, "PANIC! Disconnected from device " + device.getAddress());
+                gatt.close();
+                updateState(State.UNKNOWN);
+            } else {
+                Log.e(TAG, "Weird connection state change! " + gatt.getDevice().getAddress());
+            }
+        }
+
+        @Override
+        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            if (mConnectionState == State.DISCOVERING_LEFT) {
+                Log.i(TAG, "Left services discovered, status: " + status);
+                mCharacteristicLeft =
+                        mBluetoothGattLeft.getService(
+                                    UUID.fromString(RFDuinoGATTServices.RFDUINO_SERVICE)).
+                                getCharacteristic(
+                                    UUID.fromString(RFDuinoGATTServices.RFDUINO_SEND_DATA));
+                updateState(State.DISCOVERED_LEFT);
+            } else if(mConnectionState == State.DISCOVERING_RIGHT) {
+                Log.i(TAG, "Right services discovered, status: " + status);
+                mCharacteristicRight =
+                        mBluetoothGattRight.getService(
+                                UUID.fromString(RFDuinoGATTServices.RFDUINO_SERVICE)).
+                                getCharacteristic(
+                                        UUID.fromString(RFDuinoGATTServices.RFDUINO_SEND_DATA));
+                updateState(State.DISCOVERED_RIGHT);
+            } else {
+                Log.e(TAG, "PANIC! Unknown services discovered");
+                updateState(State.UNKNOWN);
+            }
+        }
+
+        @Override
+        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            if(mConnectionState == State.INITIAL_WRITE_LEFT){
+                Log.d(TAG,"Successfully initialised the left motor");
+                updateState(State.INITIAL_WRITE_RIGHT);
+                return;
+            }
+            if (mConnectionState == State.INITIAL_WRITE_RIGHT) {
+                Log.d(TAG, "Successfully initialised the right motor");
+                updateState(State.READY);
+                return;
+            }
+            if (gatt == mBluetoothGattLeft){
+                Log.d(TAG, "Finished writing to left motor. Device: " + gatt.getDevice().getAddress() + " Status: " + status);
+            }
+            if (gatt == mBluetoothGattRight) {
+                Log.d(TAG, "Finished writing to right motor. Device: " + gatt.getDevice().getAddress() + " Status: " + status);
+            }
+            mCurrentOperation = null;
+            BLEBusy = false;
+            nextWrite();
+        }
+    };
+
+    private synchronized void queueWrite(GattCharacteristicWriteOperation operation) {
+        if(operation.getGatt() == mBluetoothGattLeft){
+            Log.d(TAG,"Write to left motor queued");
+            mCurrentLeftOperation = operation;
+        }
+        if(operation.getGatt() == mBluetoothGattRight) {
+            Log.d(TAG,"Write to right motor queued");
+            mCurrentRightOperation = operation;
+        }
+        nextWrite();
+    }
+
+    private synchronized void nextWrite() {
+        // This is sloppy but simple. Left motor always gets write priority
+        if(BLEBusy){
+            Log.w(TAG,"BLE busy! Try again later...");
+            return;
+        }
+        if(mCurrentLeftOperation != null) {
+            Log.d(TAG,"Starting write to left motor");
+            mCurrentOperation = mCurrentLeftOperation;
+            mCurrentLeftOperation = null;
+            doWrite(mCurrentOperation);
+            return;
+        }
+        if(mCurrentRightOperation != null) {
+            Log.d(TAG,"Starting write to right motor");
+            mCurrentOperation = mCurrentRightOperation;
+            mCurrentRightOperation = null;
+            doWrite(mCurrentOperation);
+        }
+    }
+
+    private synchronized void doWrite(GattCharacteristicWriteOperation operation) {
+        BLEBusy = true;
+        Log.d(TAG,"Write started...");
+        operation.execute();
+    }
+
+
     /**
-     * Connects to the GATT server hosted on the Bluetooth LE device.
+     * Connects to the GATT servers hosted on each vibration device.
      *
-     * @param addressLeft The device address of the destination device.
+     * @param addressLeft The device address of the left motor.
+     *
+     * @param addressRight The device address of the right motor.
      *
      * @return Return true if the connection is initiated successfully. The connection result
      *         is reported asynchronously through the
@@ -142,15 +286,8 @@ public class BluetoothLeService extends Service {
         }
         Log.d(TAG, "Requesting connection to both motors");
 
-        GattOperation connectLeft = new GattConnectOperation(mBluetoothDeviceLeft);
-        mGattManager.queue(connectLeft);
-        GattOperation connectRight = new GattConnectOperation(mBluetoothDeviceRight);
-        mGattManager.queue(connectRight);
-        GattOperation discoverServicesLeft = new GattServiceDiscoveryOperation(mBluetoothDeviceLeft);
-        mGattManager.queue(discoverServicesLeft);
-        GattOperation discoverServicesRight = new GattServiceDiscoveryOperation(mBluetoothDeviceRight);
-        mGattManager.queue(discoverServicesRight);
-        mConnectionState = STATE_CONNECTING;
+        updateState(State.CONNECTING_LEFT);
+
         return true;
     }
 
@@ -161,16 +298,11 @@ public class BluetoothLeService extends Service {
      * callback.
      */
     public void disconnect() {
-        Log.w(TAG,"Should be disconnecting both devices...");
+        Log.w(TAG, "Should be disconnecting both devices...");
         if (mBluetoothAdapter == null || mBluetoothDeviceLeft == null || mBluetoothDeviceRight == null) {
             Log.w(TAG, "BluetoothAdapter not initialized");
             return;
         }
-
-        GattOperation disconnectLeft = new GattDisconnectOperation(mBluetoothDeviceLeft);
-        mGattManager.queue(disconnectLeft);
-        GattOperation disconnectRight = new GattDisconnectOperation(mBluetoothDeviceRight);
-        mGattManager.queue(disconnectRight);
     }
 
     /**
@@ -183,25 +315,115 @@ public class BluetoothLeService extends Service {
     }
 
 
-    public void writeCustomCharacteristic(int value) {
+    public boolean writeMotor(String motor, int value) {
         if (mBluetoothAdapter == null || mBluetoothDeviceLeft == null || mBluetoothDeviceRight == null) {
             Log.w(TAG, "BluetoothAdapter not initialized");
-            return;
+            return false;
         }
-        //GattOperationBundle bundle = new GattOperationBundle();
-        byte[] temp = new byte[]{(byte)value};
-        GattOperation writeLeft = new GattCharacteristicWriteOperation(
-                mBluetoothDeviceLeft,
-                UUID.fromString("00002220-0000-1000-8000-00805f9b34fb"),
-                UUID.fromString("00002222-0000-1000-8000-00805f9b34fb"),
-                temp);
-        mGattManager.queue(writeLeft);
 
-        GattOperation writeRight = new GattCharacteristicWriteOperation(
-                mBluetoothDeviceRight,
-                UUID.fromString("00002220-0000-1000-8000-00805f9b34fb"),
-                UUID.fromString("00002222-0000-1000-8000-00805f9b34fb"),
-                temp);
-        mGattManager.queue(writeRight);
+        if (mConnectionState == State.INITIAL_WRITE_LEFT) {
+            mCharacteristicLeft.setValue(value, BluetoothGattCharacteristic.FORMAT_UINT8, 0);
+            mBluetoothGattLeft.writeCharacteristic(mCharacteristicLeft);
+            return true;
+        }
+        if (mConnectionState == State.INITIAL_WRITE_RIGHT) {
+            mCharacteristicRight.setValue(value, BluetoothGattCharacteristic.FORMAT_UINT8, 0);
+            mBluetoothGattRight.writeCharacteristic(mCharacteristicRight);
+            return true;
+        }
+        if (mConnectionState != State.READY) {
+            Log.e(TAG, "Tried to write before connections ready");
+            return false;
+        }
+        GattCharacteristicWriteOperation operation;
+        if (motor.contentEquals("left")) {
+            mCharacteristicLeft.setValue(value,BluetoothGattCharacteristic.FORMAT_UINT8, 0);
+            operation = new GattCharacteristicWriteOperation(mBluetoothGattLeft, mCharacteristicLeft);
+            queueWrite(operation);
+            return true;
+        }
+        if (motor.contentEquals("right")) {
+            mCharacteristicRight.setValue(value,BluetoothGattCharacteristic.FORMAT_UINT8, 0);
+            operation = new GattCharacteristicWriteOperation(mBluetoothGattRight, mCharacteristicRight);
+            queueWrite(operation);
+            return true;
+        }
+
+        return false;
+    }
+
+
+    private void updateState(State newState) {
+        mConnectionState = newState;
+        Log.d("CurrentState", mConnectionState.name());
+        switch(newState) {
+            case CONNECTING_LEFT:
+                doConnectingLeft();
+                break;
+            case CONNECTED_LEFT:
+                doConnectingRight();
+                break;
+            case CONNECTED_RIGHT:
+                updateState(State.DISCOVERING_LEFT);
+                break;
+            case DISCOVERING_LEFT:
+                doDiscoveringLeft();
+                break;
+            case DISCOVERED_LEFT:
+                updateState(State.DISCOVERING_RIGHT);
+                break;
+            case DISCOVERING_RIGHT:
+                doDiscoveringRight();
+                break;
+            case DISCOVERED_RIGHT:
+                updateState(State.INITIAL_WRITE_LEFT);
+                break;
+            case INITIAL_WRITE_LEFT:
+                doInitialWriteLeft();
+                break;
+            case INITIAL_WRITE_RIGHT:
+                doInitialWriteRight();
+                break;
+            case RESET:
+                doReset();
+                break;
+            case UNKNOWN:
+                doUnknown();
+                break;
+        }
+    }
+
+    private void doConnectingLeft(){
+        mBluetoothDeviceLeft.connectGatt(this, false, mGattCallback);
+    }
+
+    private void doConnectingRight(){
+        mBluetoothDeviceRight.connectGatt(this, false, mGattCallback);
+        updateState(State.CONNECTING_RIGHT);
+    }
+
+    private void doDiscoveringLeft(){
+        mBluetoothGattLeft.discoverServices();
+    }
+
+    private void doDiscoveringRight() {
+        mBluetoothGattRight.discoverServices();
+    }
+
+    private void doInitialWriteLeft() {
+        writeMotor("left", 0);
+    }
+
+    private void doInitialWriteRight() {
+        writeMotor("right", 0);
+    }
+
+    private void doReset() {
+        //TODO
+    }
+
+    private void doUnknown() {
+        //TODO
     }
 }
+
