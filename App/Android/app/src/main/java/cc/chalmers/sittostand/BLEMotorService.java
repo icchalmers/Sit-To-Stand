@@ -39,8 +39,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Service for managing connection and data communication with a GATT server hosted on a
  * given Bluetooth LE device.
  */
-public class BluetoothLeService extends Service {
-    private final static String TAG = BluetoothLeService.class.getSimpleName();
+public class BLEMotorService extends Service {
+    private final static String TAG = BLEMotorService.class.getSimpleName();
 
     private BluetoothManager mBluetoothManager;
     private BluetoothAdapter mBluetoothAdapter;
@@ -88,8 +88,8 @@ public class BluetoothLeService extends Service {
             "cc.chalmers.BLEMotorService.ACTION_MOTORS_READY";
 
     public class LocalBinder extends Binder {
-        BluetoothLeService getService() {
-            return BluetoothLeService.this;
+        BLEMotorService getService() {
+            return BLEMotorService.this;
         }
     }
 

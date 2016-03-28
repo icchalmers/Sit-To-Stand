@@ -43,7 +43,7 @@ public class MotorControlActivity extends Activity {
     private String mDeviceRightName;
     private String mDeviceRightAddress;
 
-    private BluetoothLeService mBluetoothLeService;
+    private BLEMotorService mBLEMotorService;
 
     private SeekBar motorControl = null;
     private View mView = null;
@@ -58,18 +58,18 @@ public class MotorControlActivity extends Activity {
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
-            mBluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
-            if (!mBluetoothLeService.initialize()) {
+            mBLEMotorService = ((BLEMotorService.LocalBinder) service).getService();
+            if (!mBLEMotorService.initialize()) {
                 Log.e(TAG, "Unable to initialize Bluetooth");
                 finish();
             }
             // Automatically connects to the device upon successful start-up initialization.
-            mBluetoothLeService.connect(mDeviceLeftAddress, mDeviceRightAddress);
+            mBLEMotorService.connect(mDeviceLeftAddress, mDeviceRightAddress);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            mBluetoothLeService = null;
+            mBLEMotorService = null;
         }
     };
 
@@ -82,16 +82,16 @@ public class MotorControlActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            if (BluetoothLeService.ACTION_MOTORS_CONNECTED.equals(action)) {
+            if (BLEMotorService.ACTION_MOTORS_CONNECTED.equals(action)) {
                 mConnected = true;
                 updateConnectionState(R.string.connected);
                 invalidateOptionsMenu();
-            } else if (BluetoothLeService.ACTION_MOTORS_DISCONNECTED.equals(action)) {
+            } else if (BLEMotorService.ACTION_MOTORS_DISCONNECTED.equals(action)) {
                 mConnected = false;
                 updateConnectionState(R.string.disconnected);
                 invalidateOptionsMenu();
                 clearUI();
-            } else if (BluetoothLeService.ACTION_MOTORS_READY.equals(action)) {
+            } else if (BLEMotorService.ACTION_MOTORS_READY.equals(action)) {
                 setViewAndChildrenEnabled(mView, true);
             }
         }
@@ -118,8 +118,8 @@ public class MotorControlActivity extends Activity {
         motorControl.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mBluetoothLeService.writeMotor("left", progress);
-                mBluetoothLeService.writeMotor("right", progress);
+                mBLEMotorService.writeMotor("left", progress);
+                mBLEMotorService.writeMotor("right", progress);
             }
 
             @Override
@@ -129,8 +129,8 @@ public class MotorControlActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                mBluetoothLeService.writeMotor("left", seekBar.getProgress());
-                mBluetoothLeService.writeMotor("right", seekBar.getProgress());
+                mBLEMotorService.writeMotor("left", seekBar.getProgress());
+                mBLEMotorService.writeMotor("right", seekBar.getProgress());
             }
         });
         ActionBar mActionBar = getActionBar();
@@ -138,7 +138,7 @@ public class MotorControlActivity extends Activity {
             mActionBar.setTitle(mDeviceLeftName);
             mActionBar.setDisplayHomeAsUpEnabled(true);
         }
-        Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+        Intent gattServiceIntent = new Intent(this, BLEMotorService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
     }
 
@@ -146,8 +146,8 @@ public class MotorControlActivity extends Activity {
     protected void onResume() {
         super.onResume();
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
-        if (mBluetoothLeService != null) {
-            final boolean result = mBluetoothLeService.connect(mDeviceLeftAddress, mDeviceRightAddress);
+        if (mBLEMotorService != null) {
+            final boolean result = mBLEMotorService.connect(mDeviceLeftAddress, mDeviceRightAddress);
             Log.d(TAG, "Connect request result=" + result);
         }
     }
@@ -162,7 +162,7 @@ public class MotorControlActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mServiceConnection);
-        mBluetoothLeService = null;
+        mBLEMotorService = null;
     }
 
     @Override
@@ -182,10 +182,10 @@ public class MotorControlActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.menu_connect:
-                mBluetoothLeService.connect(mDeviceLeftAddress, mDeviceRightAddress);
+                mBLEMotorService.connect(mDeviceLeftAddress, mDeviceRightAddress);
                 return true;
             case R.id.menu_disconnect:
-                mBluetoothLeService.disconnect();
+                mBLEMotorService.disconnect();
                 return true;
             case android.R.id.home:
                 onBackPressed();
@@ -205,16 +205,16 @@ public class MotorControlActivity extends Activity {
 
     private static IntentFilter makeGattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BluetoothLeService.ACTION_MOTORS_CONNECTED);
-        intentFilter.addAction(BluetoothLeService.ACTION_MOTORS_DISCONNECTED);
-        intentFilter.addAction(BluetoothLeService.ACTION_MOTORS_READY);
+        intentFilter.addAction(BLEMotorService.ACTION_MOTORS_CONNECTED);
+        intentFilter.addAction(BLEMotorService.ACTION_MOTORS_DISCONNECTED);
+        intentFilter.addAction(BLEMotorService.ACTION_MOTORS_READY);
         return intentFilter;
     }
 
     public void disableMotors(View v){
-        if(mBluetoothLeService != null) {
-            mBluetoothLeService.writeMotor("left", 0);
-            mBluetoothLeService.writeMotor("right", 0);
+        if(mBLEMotorService != null) {
+            mBLEMotorService.writeMotor("left", 0);
+            mBLEMotorService.writeMotor("right", 0);
         }
     }
 

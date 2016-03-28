@@ -27,7 +27,7 @@
         </activity>
 
         <service
-            android:name=".BluetoothLeService"
+            android:name=".BLEMotorService"
             android:enabled="true" />
 
         <activity
