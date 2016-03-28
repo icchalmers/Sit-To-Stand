@@ -40,12 +40,6 @@ public class Screen extends Activity {
 		@Override
 		public void onServiceConnected(ComponentName componentName, IBinder service) {
 			mBLEMotorService = ((BLEMotorService.LocalBinder) service).getService();
-//			if (!mBLEMotorService.initialize()) {
-//				Log.e(TAG, "Unable to initialize Bluetooth");
-//				finish();
-//			}
-//			// Automatically connects to the device upon successful start-up initialization.
-//			mBLEMotorService.connect(mDeviceLeftAddress, mDeviceRightAddress);
 			Log.d(TAG, "Bound to BLEMotorService in Screen");
 		}
 
@@ -120,6 +114,11 @@ public class Screen extends Activity {
 		public void showToast(String toast) {
 			Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
 		}
+
+        @JavascriptInterface
+        public void addLog(String message) {
+            Log.d(TAG, message);
+        }
 
 		@JavascriptInterface
 		public void makeFile(String content) {
