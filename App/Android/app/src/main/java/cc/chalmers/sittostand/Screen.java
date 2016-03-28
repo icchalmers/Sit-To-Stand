@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -74,18 +75,11 @@ public class Screen extends Activity {
 	@Override
 	protected void onDestroy() {
 		JavaScriptInterface jsi = new JavaScriptInterface(this);
-		jsi.sendBluetooth("LOW");
+		jsi.disableMotors();
 		super.onDestroy();
 	}
 
 	public class JavaScriptInterface {
-//		private final static String address = "98:76:B6:00:35:79";
-//		private final UUID MY_UUID = UUID.randomUUID();
-//
-//		private BluetoothSocket btSocket = null;
-//		private OutputStream streamOut = null;
-//		private MotorService mMotorService = null;
-
 		Context mContext;
 
 		public JavaScriptInterface(Context c) {
@@ -101,9 +95,26 @@ public class Screen extends Activity {
 		}
 		
 		@JavascriptInterface
-		public void sendBluetooth(String value){
-			//TODO
+		public void sendBluetooth(String motor, int value){
+            Log.d(TAG, "Sending " + value + " to " + motor + " motor.");
+			mBLEMotorService.writeMotor(motor, value);
 		}
+
+        @JavascriptInterface
+        public void disableMotors(){
+            if(mBLEMotorService != null) {
+                mBLEMotorService.writeMotor("left", 0);
+                mBLEMotorService.writeMotor("right", 0);
+            }
+        }
+
+        @JavascriptInterface
+        public void enableMotors(){
+            if(mBLEMotorService != null) {
+                mBLEMotorService.writeMotor("left", 50);
+                mBLEMotorService.writeMotor("right", 50);
+            }
+        }
 
 		@JavascriptInterface
 		public void showToast(String toast) {
@@ -112,7 +123,6 @@ public class Screen extends Activity {
 
 		@JavascriptInterface
 		public void makeFile(String content) {
-			Toast.makeText(mContext, "File Sent", Toast.LENGTH_SHORT).show();
 			String filename = new Date().toString();
 			FileOutputStream fOS = null;
 			try {
@@ -123,8 +133,10 @@ public class Screen extends Activity {
 				File file = new File(dir, filename + ".txt");
 				fOS = new FileOutputStream(file);
 				fOS.write(content.getBytes());
+                Toast.makeText(mContext, "File Saved", Toast.LENGTH_SHORT).show();
 			} catch (IOException e) {
 				Log.e("Exception", "File write failed: " + e.toString());
+                Toast.makeText(mContext, "File save failed!", Toast.LENGTH_SHORT).show();
 			} finally {
 				try {
 					fOS.close();

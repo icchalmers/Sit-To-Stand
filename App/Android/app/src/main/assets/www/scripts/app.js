@@ -33,7 +33,12 @@ var lastValue = 0;
 var message = "";
 
 //Sent to Android to send message to Arduino
-var vibration = "";
+var vibration = 0;
+var previousMotor;
+
+var VIBRATION_SCALE = 10;
+var DEAD_ZONE_ANGLE = 2;
+var MAX_ANGLE = 30;
 
 function showTime() {
     "use strict";
@@ -104,11 +109,7 @@ function orient() {
                 message += " Corrected B:" + smoothedBeta;
             }
             lastValue = smoothedGamma;
-            
-            
-            
-            
-           
+
             message += " G:" + smoothedGamma;
             
             message += " Flipped:" + axisFlip;
@@ -311,11 +312,11 @@ function balanceController($scope, $interval) {
         $scope.setScreen(1);
     };
 
-    $scope.sendBT = function (signal) {
+    $scope.sendBT = function (motor, value) {
         var ua = navigator.userAgent.toLowerCase();
         var isAndroid = ua.indexOf("android") > -1;
         if (isAndroid && typeof Android !== 'undefined') {
-            Android.sendBluetooth(signal);
+            Android.sendBluetooth(motor, value);
         }
     };
 
@@ -354,7 +355,8 @@ function balanceController($scope, $interval) {
         
 
         $interval.cancel(running);
-        $scope.sendBT("LOW");
+        $scope.sendBT("left", 0);
+        $scope.sendBT("right", 0);
         $scope.setScreen(1);
     };
 
@@ -390,20 +392,32 @@ function balanceController($scope, $interval) {
         var color = [];
         running = $interval(function () {
             smoothAngles(false);
+            var motorSelect
             if (diffBeta > 0) {
-                vibration += "R";
+                motorSelect = "right"
                 color = [255, 0, 0];
             } else {
-                vibration += "L";
+                motorSelect = "left"
                 color = [0, 0, 255];
             }
-            vibration += Math.abs(Math.round(diffBeta));
-            $scope.sendBT(vibration);
-            vibration = "";
-            var colorIntensity = Math.min(1, (Math.abs(diffBeta) / 30));
-            color.push(colorIntensity);
+            // If active side switches, ensure inactive motor turned off
+            if(previousMotor != motorSelect) {
+                $scope.sendBT(previousMotor, 0);
+                previousMotor = motorSelect;
+            }
+            // Motors take a value from 0 to 255 so scale up the raw angle
+            vibration = Math.abs(Math.round(diffBeta * VIBRATION_SCALE));
+
+            // Add a dead zone for the vibrators
+            if (Math.abs(diffBeta) < DEAD_ZONE_ANGLE) {
+                vibration = 0;
+            }
+
+            $scope.sendBT(motorSelect, vibration);
+            //var colorIntensity = Math.min(1, (Math.abs(diffBeta) / 30));
+            //color.push(colorIntensity);
             //document.body.style.background = 'rgba(' + color.join(',') + ')';
-        }, 150);
+        }, 100);
     };
 
     $scope.getTime = function () {
