@@ -1,6 +1,7 @@
 package cc.chalmers.sittostand;
 
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.BroadcastReceiver;
@@ -44,7 +45,7 @@ public class MotorControlActivity extends Activity {
     private BluetoothLeService mBluetoothLeService;
 
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
-            new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
+            new ArrayList<>();
     private boolean mConnected = false;
 
 
@@ -133,9 +134,11 @@ public class MotorControlActivity extends Activity {
                 mBluetoothLeService.writeMotor("right", seekBar.getProgress());
             }
         });
-
-        getActionBar().setTitle(mDeviceLeftName);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar mActionBar = getActionBar();
+        if(mActionBar != null) {
+            mActionBar.setTitle(mDeviceLeftName);
+            mActionBar.setDisplayHomeAsUpEnabled(true);
+        }
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
     }
@@ -224,7 +227,7 @@ public class MotorControlActivity extends Activity {
         }
     }
 
-    public void startCalibration() {
+    public void startCalibration(View v) {
         //TODO start the full screen web browser activity
     }
 
