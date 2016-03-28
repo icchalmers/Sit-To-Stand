@@ -51,11 +51,11 @@ public class Screen extends Activity {
 	}
 
 	public class JavaScriptInterface {
-		private final static String address = "98:76:B6:00:35:79";
-		private final UUID MY_UUID = UUID.randomUUID();
-
-		private BluetoothSocket btSocket = null;
-		private OutputStream streamOut = null;
+//		private final static String address = "98:76:B6:00:35:79";
+//		private final UUID MY_UUID = UUID.randomUUID();
+//
+//		private BluetoothSocket btSocket = null;
+//		private OutputStream streamOut = null;
 //		private MotorService mMotorService = null;
 
 		Context mContext;
@@ -66,51 +66,12 @@ public class Screen extends Activity {
 
 		@JavascriptInterface
 		public void connectBT(){
-//			mMotorService = new MotorService(mContext);
-			showToast("startedConnection");
-			boolean failed = true;
-//			ArrayList<BluetoothDevice> foundMotors = mMotorService.findMotors();
-//			mMotorService.findMotors();
-
-
-			// This is absolutely a sloppy way of waiting for the BLE scan to finish...but my
-			// Android development experience is basically zero...
-			try {
-				Thread.sleep(5000);
-			}catch(InterruptedException e) {}
-			//mMotorService.
-
-			if(failed){
-				showToast("Connection failed");
-			}
-			else{
-				showToast("Connection successful");
-			}
+			//TODO
 		}
 		
 		@JavascriptInterface
 		public void sendBluetooth(String value){
-//			if(mMotorService == null){
-//				connectBT();
-//			}
-//			Log.i("BLEScan", "Trying to write data...");
-//			byte dataToSend[] = new byte[] {(byte)50};
-//			mMotorService.setMotor("right", dataToSend);
-
-			/*
-			try{
-				streamOut = btSocket.getOutputStream();
-			} catch(IOException e){
-				Log.d("Sending","Output stream failed");
-			}
-			byte[] message = value.getBytes();
-			
-			try{
-				streamOut.write(message);
-			} catch(IOException e){
-				Log.d("Sending","Sending failed");
-			}
-			*/
+			//TODO
 		}
 
 		@JavascriptInterface

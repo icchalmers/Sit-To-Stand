@@ -18,4 +18,11 @@
         android:max="255"
         />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:text="Start Calibration"
+        android:id="@+id/button_start"
+        android:onClick="startCalibration" />
+
 </LinearLayout>

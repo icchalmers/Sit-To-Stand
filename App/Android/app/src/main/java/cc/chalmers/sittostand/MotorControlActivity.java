@@ -224,4 +224,8 @@ public class MotorControlActivity extends Activity {
         }
     }
 
+    public void startCalibration() {
+        //TODO start the full screen web browser activity
+    }
+
 }
