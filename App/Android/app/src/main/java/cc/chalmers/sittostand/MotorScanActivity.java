@@ -69,7 +69,6 @@ public class MotorScanActivity extends ListActivity {
         final BluetoothManager bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
-        scanner = mBluetoothAdapter.getBluetoothLeScanner();
 
         // Checks if Bluetooth is supported on the device.
         if (mBluetoothAdapter == null) {
@@ -77,6 +76,7 @@ public class MotorScanActivity extends ListActivity {
             finish();
             return;
         }
+
         checkLocationPermissions();
     }
 
@@ -178,6 +178,10 @@ public class MotorScanActivity extends ListActivity {
 
     private void scanLeDevice(final boolean enable) {
 
+        // TODO Need to check bluetooth is enabled better than just checking the scanner isnt null
+        if (scanner == null) {
+            return;
+        }
         if (enable) {
             // Stops scanning after a pre-defined scan period.
             mHandler.postDelayed(new Runnable() {
