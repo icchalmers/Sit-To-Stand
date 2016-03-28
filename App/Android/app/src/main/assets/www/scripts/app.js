@@ -67,6 +67,14 @@ function connectBT() {
     }
 }
 
+function addLog(msg) {
+    "use strict";
+    var ua = navigator.userAgent.toLowerCase();
+    var isAndroid = ua.indexOf("android") > -1;
+    if (isAndroid && typeof Android !== 'undefined') {
+        Android.addLog(msg);
+    }
+}
 function orient() {
     "use strict";
     var handler = function (event) {
@@ -120,8 +128,15 @@ function orient() {
             var secs = date.getSeconds().toString();
             var mil = date.getMilliseconds().toString();
             message += (" T:" + hours + ":" + mins + ":" + secs + ":" + mil + "\n");
+
+//            var absoluteSupported = event.absolute;
+//            if (absoluteSupported) {
+//                addLog("Using earth based orientation");
+//            } else {
+//                addLog("Using device based orientation");
+//            }
         }
-        //window.removeEventListener('deviceorientation', handler, false);
+
     };
 
 
@@ -240,26 +255,32 @@ function calibrateValues() {
     var gCos = 0;
 
 
+    var tempTotal = 0;
     var i = 0;
     for (i in totalAlpha) {
         aCos += Math.cos(convert("rad", totalAlpha[i]));
         aSin += Math.sin(convert("rad", totalAlpha[i]));
+        tempTotal += convert("deg", Math.atan2(aSin, aCos));
     }
-    calibAlpha = (360 + convert("deg", Math.atan2(aSin, aCos))) % 360;
+    calibAlpha = tempTotal / i;
 
+    tempTotal = 0;
     i = 0;
     for (i in totalBeta) {
         bCos += Math.cos(convert("rad", totalBeta[i]));
         bSin += Math.sin(convert("rad", totalBeta[i]));
+        tempTotal += convert("deg", Math.atan2(bSin, bCos));
     }
-    calibBeta = convert("deg", Math.atan2(bSin, bCos));
+    calibBeta = tempTotal / i;
 
+    tempTotal = 0;
     i = 0;
     for (i in totalGamma) {
         gCos += Math.cos(convert("rad", totalGamma[i]));
         gSin += Math.sin(convert("rad", totalGamma[i]));
+        tempTotal += convert("deg", Math.atan2(gSin, gCos));
     }
-    calibGamma = convert("deg", Math.atan2(gSin, gCos));
+    calibGamma = tempTotal / i;
 
     message += "Calibrated!\n";
 }
@@ -393,12 +414,12 @@ function balanceController($scope, $interval) {
         running = $interval(function () {
             smoothAngles(false);
             var motorSelect
-            if (diffBeta > 0) {
+            if (diffAlpha > 0) {
                 motorSelect = "right"
-                color = [255, 0, 0];
+//               color = [255, 0, 0];
             } else {
                 motorSelect = "left"
-                color = [0, 0, 255];
+//               color = [0, 0, 255];
             }
             // If active side switches, ensure inactive motor turned off
             if(previousMotor != motorSelect) {
