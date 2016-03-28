@@ -44,6 +44,8 @@ public class MotorControlActivity extends Activity {
 
     private BluetoothLeService mBluetoothLeService;
 
+    private SeekBar motorControl = null;
+
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
             new ArrayList<>();
     private boolean mConnected = false;
@@ -100,9 +102,6 @@ public class MotorControlActivity extends Activity {
     private void clearUI() {
         //mGattServicesList.setAdapter((SimpleExpandableListAdapter) null);
     }
-
-
-    private SeekBar motorControl = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
