@@ -80,16 +80,12 @@ public class BluetoothLeService extends Service {
     private State mConnectionState = State.UNKNOWN;
 
 
-    public final static String ACTION_GATT_CONNECTED =
-            "com.example.bluetooth.le.ACTION_GATT_CONNECTED";
-    public final static String ACTION_GATT_DISCONNECTED =
-            "com.example.bluetooth.le.ACTION_GATT_DISCONNECTED";
-    public final static String ACTION_GATT_SERVICES_DISCOVERED =
-            "com.example.bluetooth.le.ACTION_GATT_SERVICES_DISCOVERED";
-    public final static String ACTION_DATA_AVAILABLE =
-            "com.example.bluetooth.le.ACTION_DATA_AVAILABLE";
-    public final static String EXTRA_DATA =
-            "com.example.bluetooth.le.EXTRA_DATA";
+    public final static String ACTION_MOTORS_CONNECTED =
+            "cc.chalmers.BLEMotorService.ACTION_MOTORS_CONNECTED";
+    public final static String ACTION_MOTORS_DISCONNECTED =
+            "cc.chalmers.BLEMotorService.ACTION_MOTORS_DISCONNECTED";
+    public final static String ACTION_MOTORS_READY =
+            "cc.chalmers.BLEMotorService.ACTION_MOTORS_READY";
 
     public class LocalBinder extends Binder {
         BluetoothLeService getService() {
@@ -364,6 +360,7 @@ public class BluetoothLeService extends Service {
                 doConnectingRight();
                 break;
             case CONNECTED_RIGHT:
+                broadcastUpdate(ACTION_MOTORS_CONNECTED);
                 updateState(State.DISCOVERING_LEFT);
                 break;
             case DISCOVERING_LEFT:
@@ -383,6 +380,9 @@ public class BluetoothLeService extends Service {
                 break;
             case INITIAL_WRITE_RIGHT:
                 doInitialWriteRight();
+                break;
+            case READY:
+                doReady();
                 break;
             case RESET:
                 doReset();
@@ -418,12 +418,20 @@ public class BluetoothLeService extends Service {
         writeMotor("right", 0);
     }
 
+    private void doReady() {
+        broadcastUpdate(ACTION_MOTORS_READY);
+    }
     private void doReset() {
         //TODO
     }
 
     private void doUnknown() {
         //TODO
+    }
+
+    private void broadcastUpdate(final String action) {
+        final Intent intent = new Intent(action);
+        sendBroadcast(intent);
     }
 }
 

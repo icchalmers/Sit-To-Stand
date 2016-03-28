@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -45,6 +46,7 @@ public class MotorControlActivity extends Activity {
     private BluetoothLeService mBluetoothLeService;
 
     private SeekBar motorControl = null;
+    private View mView = null;
 
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
             new ArrayList<>();
@@ -72,29 +74,25 @@ public class MotorControlActivity extends Activity {
     };
 
     // Handles various events fired by the Service.
-    // ACTION_GATT_CONNECTED: connected to a GATT server.
-    // ACTION_GATT_DISCONNECTED: disconnected from a GATT server.
-    // ACTION_GATT_SERVICES_DISCOVERED: discovered GATT services.
-    // ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
-    //                        or notification operations.
+    // ACTION_MOTORS_CONNECTED: connected to both motors
+    // ACTION_MOTORS_DISCONNECTED: disconnected from a motor
+    // ACTION_MOTORS_READY: discovered GATT services.
+    //
     private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+            if (BluetoothLeService.ACTION_MOTORS_CONNECTED.equals(action)) {
                 mConnected = true;
                 updateConnectionState(R.string.connected);
                 invalidateOptionsMenu();
-            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+            } else if (BluetoothLeService.ACTION_MOTORS_DISCONNECTED.equals(action)) {
                 mConnected = false;
                 updateConnectionState(R.string.disconnected);
                 invalidateOptionsMenu();
                 clearUI();
-            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                // Show all the supported services and characteristics on the user interface.
-                //displayGattServices(mBluetoothLeService.getSupportedGattServices());
-            } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
-                displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+            } else if (BluetoothLeService.ACTION_MOTORS_READY.equals(action)) {
+                setViewAndChildrenEnabled(mView, true);
             }
         }
     };
@@ -107,6 +105,8 @@ public class MotorControlActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_motor_control);
+        mView = findViewById(R.id.motor_control_layout);
+        setViewAndChildrenEnabled(mView, false);
 
         final Intent intent = getIntent();
         mDeviceLeftName = intent.getStringExtra(EXTRAS_DEVICE1_NAME);
@@ -203,25 +203,17 @@ public class MotorControlActivity extends Activity {
         });
     }
 
-    private void displayData(String data) {
-        if (data != null) {
-            mDataField.setText(data);
-        }
-    }
-
     private static IntentFilter makeGattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
-        intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
-        intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
-        intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
+        intentFilter.addAction(BluetoothLeService.ACTION_MOTORS_CONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_MOTORS_DISCONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_MOTORS_READY);
         return intentFilter;
     }
 
     public void disableMotors(View v){
         if(mBluetoothLeService != null) {
             mBluetoothLeService.writeMotor("left", 0);
-            mBluetoothLeService.writeMotor("right", 0);
             mBluetoothLeService.writeMotor("right", 0);
         }
     }
@@ -230,4 +222,14 @@ public class MotorControlActivity extends Activity {
         //TODO start the full screen web browser activity
     }
 
+    private static void setViewAndChildrenEnabled(View view, boolean enabled) {
+        view.setEnabled(enabled);
+        if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                View child = viewGroup.getChildAt(i);
+                setViewAndChildrenEnabled(child, enabled);
+            }
+        }
+    }
 }
