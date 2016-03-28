@@ -36,9 +36,9 @@ var message = "";
 var vibration = 0;
 var previousMotor;
 
-var VIBRATION_SCALE = 10;
+var VIBRATION_MAX = 255; // Needs to be <= 255
 var DEAD_ZONE_ANGLE = 2;
-var MAX_ANGLE = 30;
+var ANGLE_MAX = 30;
 
 function showTime() {
     "use strict";
@@ -405,13 +405,8 @@ function balanceController($scope, $interval) {
                 $scope.sendBT(previousMotor, 0);
                 previousMotor = motorSelect;
             }
-            // Motors take a value from 0 to 255 so scale up the raw angle
-            vibration = Math.abs(Math.round(diffBeta * VIBRATION_SCALE));
-
-            // Add a dead zone for the vibrators
-            if (Math.abs(diffBeta) < DEAD_ZONE_ANGLE) {
-                vibration = 0;
-            }
+            
+            vibration = $scope.calculateVibration(diffBeta);
 
             $scope.sendBT(motorSelect, vibration);
             //var colorIntensity = Math.min(1, (Math.abs(diffBeta) / 30));
@@ -420,6 +415,16 @@ function balanceController($scope, $interval) {
         }, 100);
     };
 
+    $scope.calculateVibration = function(angle) {
+        angle = Math.abs(angle);
+        if(angle < DEAD_ZONE_ANGLE){return 0;}
+        if(angle > ANGLE_MAX){
+            angle = ANGLE_MAX;
+        }
+        return angle / ANGLE_MAX * VIBRATION_MAX;
+        
+    }
+    
     $scope.getTime = function () {
         var today = new Date();
         return today.toGMTString();
