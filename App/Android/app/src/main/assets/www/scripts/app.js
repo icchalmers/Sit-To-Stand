@@ -83,7 +83,7 @@ function orient() {
                 if (smoothedAlpha === 0) {
                     smoothedAlpha = event.alpha;
                 }
-                smoothedAlpha = event.alpha + 0.25 * (smoothedAlpha - event.alpha);
+                smoothedAlpha = smoothedAlpha + 0.2 * (event.alpha - smoothedAlpha );
                 alpha.push(smoothedAlpha);
                 message += "A:" + smoothedAlpha;
             }
@@ -91,17 +91,15 @@ function orient() {
                 if (smoothedBeta === 0) {
                     smoothedBeta = event.beta;
                 }
-                smoothedBeta = event.beta;
-//                    + 0.25 * (smoothedBeta - event.beta);
+                smoothedBeta = smoothedBeta + 0.2 * (event.beta - smoothedBeta);
                 message += "B:" + smoothedBeta;
             }
             if (event.gamma !== null && event.gamma !== 0) {
-                var g = 2 * event.gamma;
+                var g = 2 * event.gamma; // Why does this need multiplied?!
                 if (smoothedGamma === 0) {
                     smoothedGamma = g;
                 }
-                smoothedGamma = g;
-//                    + 0.25 * (smoothedGamma - g);
+                smoothedGamma = smoothedGamma + 0.2 * (g - smoothedGamma);
                 gamma.push(smoothedGamma);
                 
             }
