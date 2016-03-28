@@ -117,7 +117,7 @@ public class Screen extends Activity {
 
         @JavascriptInterface
         public void addLog(String message) {
-            Log.d(TAG, message);
+            Log.d(TAG + "JS", message);
         }
 
 		@JavascriptInterface
