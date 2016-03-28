@@ -76,7 +76,7 @@ public class MotorScanActivity extends ListActivity {
             finish();
             return;
         }
-
+        scanner = mBluetoothAdapter.getBluetoothLeScanner();
         checkLocationPermissions();
     }
 
