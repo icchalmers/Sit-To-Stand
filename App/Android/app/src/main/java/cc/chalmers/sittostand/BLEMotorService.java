@@ -77,6 +77,7 @@ public class BLEMotorService extends Service {
         DISCONNECTING,
         RESET
     }
+
     private State mConnectionState = State.UNKNOWN;
 
 
@@ -432,6 +433,10 @@ public class BLEMotorService extends Service {
     private void broadcastUpdate(final String action) {
         final Intent intent = new Intent(action);
         sendBroadcast(intent);
+    }
+
+    public State getState() {
+        return mConnectionState;
     }
 }
 

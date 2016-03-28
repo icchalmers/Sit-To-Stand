@@ -53,7 +53,7 @@ function updateBar() {
     showTime();
 }
 
-function startBT() {
+function connectBT() {
     "use strict";
     var ua = navigator.userAgent.toLowerCase();
     var isAndroid = ua.indexOf("android") > -1;
@@ -307,7 +307,7 @@ function balanceController($scope, $interval) {
     };
     
     $scope.checkBT = function () {
-        startBT();
+        connectBT();
         $scope.setScreen(1);
     };
 
@@ -361,7 +361,7 @@ function balanceController($scope, $interval) {
     var calib;
     $scope.startCalib = function () {
         if (!connected) {
-            startBT();
+            connectBT();
             connected = true;
         }
         message = "";

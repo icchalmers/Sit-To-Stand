@@ -14,10 +14,13 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothSocket;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
@@ -27,6 +30,29 @@ import android.widget.Toast;
 public class Screen extends Activity {
 
 	private WebView myWebView;
+	private BLEMotorService mBLEMotorService;
+	private final String TAG = "Screen";
+
+	// Code to manage Service lifecycle.
+	private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+		@Override
+		public void onServiceConnected(ComponentName componentName, IBinder service) {
+			mBLEMotorService = ((BLEMotorService.LocalBinder) service).getService();
+//			if (!mBLEMotorService.initialize()) {
+//				Log.e(TAG, "Unable to initialize Bluetooth");
+//				finish();
+//			}
+//			// Automatically connects to the device upon successful start-up initialization.
+//			mBLEMotorService.connect(mDeviceLeftAddress, mDeviceRightAddress);
+			Log.d(TAG, "Bound to BLEMotorService in Screen");
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName componentName) {
+			mBLEMotorService = null;
+		}
+	};
 
 	@SuppressLint({ "SetJavaScriptEnabled", "JavascriptInterface" })
 	@Override
@@ -40,6 +66,8 @@ public class Screen extends Activity {
 		myWebView.loadUrl("file:///android_asset/www/index.html");
 		myWebView.addJavascriptInterface(new JavaScriptInterface(this),
 				"Android");
+		Intent gattServiceIntent = new Intent(this, BLEMotorService.class);
+		bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
 	}
 
@@ -66,7 +94,10 @@ public class Screen extends Activity {
 
 		@JavascriptInterface
 		public void connectBT(){
-			//TODO
+			BLEMotorService.State currentState = mBLEMotorService.getState();
+			if (currentState != BLEMotorService.State.READY) {
+				Log.e(TAG, "Motor service not ready! Current state:" + currentState);
+			}
 		}
 		
 		@JavascriptInterface

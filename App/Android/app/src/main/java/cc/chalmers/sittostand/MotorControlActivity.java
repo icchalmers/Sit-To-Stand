@@ -219,7 +219,8 @@ public class MotorControlActivity extends Activity {
     }
 
     public void startCalibration(View v) {
-        //TODO start the full screen web browser activity
+        final Intent intent = new Intent(this, Screen.class);
+        startActivity(intent);
     }
 
     private static void setViewAndChildrenEnabled(View view, boolean enabled) {
