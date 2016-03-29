@@ -120,7 +120,7 @@ public class MotorControlActivity extends Activity {
         });
         ActionBar mActionBar = getActionBar();
         if(mActionBar != null) {
-            mActionBar.setTitle(mDeviceLeftName);
+            mActionBar.setTitle("Motor Setup");
             mActionBar.setDisplayHomeAsUpEnabled(true);
         }
         Intent gattServiceIntent = new Intent(this, BLEMotorService.class);
