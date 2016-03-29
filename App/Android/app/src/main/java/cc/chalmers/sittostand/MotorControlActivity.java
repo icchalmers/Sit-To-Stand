@@ -3,7 +3,6 @@ package cc.chalmers.sittostand;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -18,14 +17,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
-import android.widget.TextView;
-
-import java.util.ArrayList;
 
 
 /**
  * For a set of BLEVibrators this activity allows you to connect and test the motors and assign to
- * left/right leg.  The Activity communicates with {@code MotorService}, which in turn interacts
+ * left/right leg.  The Activity communicates with {@code BLEMotorService}, which in turn interacts
  * with the Bluetooth LE API.
  */
 public class MotorControlActivity extends Activity {
@@ -36,8 +32,6 @@ public class MotorControlActivity extends Activity {
     public static final String EXTRAS_DEVICE2_NAME = "DEVICE2_NAME";
     public static final String EXTRAS_DEVICE2_ADDRESS = "DEVICE2_ADDRESS";
 
-    private TextView mConnectionState;
-    private TextView mDataField;
     private String mDeviceLeftName;
     private String mDeviceLeftAddress;
     private String mDeviceRightName;
@@ -48,8 +42,6 @@ public class MotorControlActivity extends Activity {
     private SeekBar motorControl = null;
     private View mView = null;
 
-    private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
-            new ArrayList<>();
     private boolean mConnected = false;
 
 
@@ -84,22 +76,15 @@ public class MotorControlActivity extends Activity {
             final String action = intent.getAction();
             if (BLEMotorService.ACTION_MOTORS_CONNECTED.equals(action)) {
                 mConnected = true;
-                updateConnectionState(R.string.connected);
                 invalidateOptionsMenu();
             } else if (BLEMotorService.ACTION_MOTORS_DISCONNECTED.equals(action)) {
                 mConnected = false;
-                updateConnectionState(R.string.disconnected);
                 invalidateOptionsMenu();
-                clearUI();
             } else if (BLEMotorService.ACTION_MOTORS_READY.equals(action)) {
                 setViewAndChildrenEnabled(mView, true);
             }
         }
     };
-
-    private void clearUI() {
-        //mGattServicesList.setAdapter((SimpleExpandableListAdapter) null);
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -192,15 +177,6 @@ public class MotorControlActivity extends Activity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void updateConnectionState(final int resourceId) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                //mConnectionState.setText(resourceId);
-            }
-        });
     }
 
     private static IntentFilter makeGattUpdateIntentFilter() {
