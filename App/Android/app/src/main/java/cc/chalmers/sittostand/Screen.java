@@ -70,6 +70,8 @@ public class Screen extends Activity {
 	protected void onDestroy() {
 		JavaScriptInterface jsi = new JavaScriptInterface(this);
 		jsi.disableMotors();
+		unbindService(mServiceConnection);
+		mBLEMotorService = null;
 		super.onDestroy();
 	}
 
