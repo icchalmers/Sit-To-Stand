@@ -412,8 +412,8 @@ function balanceController($scope, $interval) {
         running = $interval(function () {
             smoothAngles(false);
             var motorSelect
-            // TODO diffAlpha does work as a way of detecting which way the user is leaning.
-            // Need to translate coordinate system from Earth to Device.
+            // TODO diffAlpha does NOT work well as a way of detecting which way the user is
+            // leaning. Need to translate coordinate system from Earth to Device?
             if (diffAlpha > 0) {
                 motorSelect = "right"
 //               color = [255, 0, 0];
