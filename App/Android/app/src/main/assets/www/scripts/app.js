@@ -75,6 +75,16 @@ function addLog(msg) {
         Android.addLog(msg);
     }
 }
+
+function getYaw() {
+    "use strict";
+    var ua = navigator.userAgent.toLowerCase();
+    var isAndroid = ua.indexOf("android") > -1;
+    if (isAndroid && typeof Android !== 'undefined') {
+       return Android.getYaw();
+    }
+}
+
 function orient() {
     "use strict";
     var handler = function (event) {
@@ -126,7 +136,6 @@ function orient() {
             var secs = date.getSeconds().toString();
             var mil = date.getMilliseconds().toString();
             message += (" T:" + hours + ":" + mins + ":" + secs + ":" + mil + "\n");
-
         }
     };
 
