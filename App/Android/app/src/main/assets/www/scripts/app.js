@@ -36,7 +36,7 @@ var message = "";
 var vibration = 0;
 var previousMotor;
 
-var VIBRATION_MAX = 255; // Needs to be <= 255
+var VIBRATION_MAX = 128; // Needs to be <= 255
 var DEAD_ZONE_ANGLE = 2;
 var ANGLE_MAX = 30;
 
@@ -91,9 +91,9 @@ function orient() {
         if (event !== null) {
             if (event.alpha !== null && event.alpha !== 0) {
                 if (smoothedAlpha === 0) {
-                    smoothedAlpha = event.alpha;
+                    smoothedAlpha = getYaw();
                 }
-                smoothedAlpha = smoothedAlpha + 0.2 * (event.alpha - smoothedAlpha );
+                smoothedAlpha = smoothedAlpha + 0.2 * (getYaw() - smoothedAlpha );
                 alpha.push(smoothedAlpha);
                 message += "A:" + smoothedAlpha;
             }
@@ -414,14 +414,10 @@ function balanceController($scope, $interval) {
         running = $interval(function () {
             smoothAngles(false);
             var motorSelect
-            // TODO diffAlpha does NOT work well as a way of detecting which way the user is
-            // leaning. Need to translate coordinate system from Earth to Device?
             if (diffAlpha > 0) {
                 motorSelect = "right"
-//               color = [255, 0, 0];
             } else {
                 motorSelect = "left"
-//               color = [0, 0, 255];
             }
             // If active side switches, ensure inactive motor turned off
             if(previousMotor != motorSelect) {
@@ -429,12 +425,9 @@ function balanceController($scope, $interval) {
                 previousMotor = motorSelect;
             }
             
-            vibration = $scope.calculateVibration(diffBeta);
+            vibration = $scope.calculateVibration(diffAlpha);
 
             $scope.sendBT(motorSelect, vibration);
-            //var colorIntensity = Math.min(1, (Math.abs(diffBeta) / 30));
-            //color.push(colorIntensity);
-            //document.body.style.background = 'rgba(' + color.join(',') + ')';
         }, 100);
     };
 
