@@ -15,18 +15,6 @@
 </head>
 <body onload="setupSound();">
     <div ng-app="" ng-controller="balanceController" class="full-size">
-        <div ng-show="isScreen(0)" class="centre-vertical">
-            <button id="checkBT" class="btn btn-primary btn-lg btn-block" ng-click="checkBT();" style="font-size:xx-large">Start Connection</button> 
-            <button id="startProgram" class="btn btn-primary btn-lg btn-block" ng-click="setScreen(1);" style="font-size:xx-large">Start Program</button>      
-            <div class = "row">
-            <div class="col-xs-6">
-                <button id="sendHigh" class="btn btn-primary btn-lg btn-block" ng-click="enableMotors();" style="font-size:xx-large">High</button>
-                </div>
-                <div class="col-xs-6">
-                <button id="sendHigh" class="btn btn-primary btn-lg btn-block" ng-click="disableMotors();" style="font-size:xx-large">Low</button>
-                </div>
-            </div>
-        </div>
         <button id="gobutton" class="btn btn-primary full-size" ng-click="setScreen(2); startCalib();" style="font-size:xx-large" ng-show="isScreen(1)">Start</button>
         <div class="full-size" ng-show="isScreen(2)" ng-click="startOver()">
         <div class="row">

@@ -2,7 +2,7 @@ var calibTime = 0;
 
 var audio;
 
-var screenNum = 0;
+var screenNum = 1;
 var angleCalibrations = [0, 0, 0];
 
 var alpha = [];
@@ -127,14 +127,7 @@ function orient() {
             var mil = date.getMilliseconds().toString();
             message += (" T:" + hours + ":" + mins + ":" + secs + ":" + mil + "\n");
 
-//            var absoluteSupported = event.absolute;
-//            if (absoluteSupported) {
-//                addLog("Using earth based orientation");
-//            } else {
-//                addLog("Using device based orientation");
-//            }
         }
-
     };
 
 
