@@ -2,7 +2,7 @@ var calibTime = 0;
 
 var audio;
 
-var screenNum = 0;
+var screenNum = 1;
 var angleCalibrations = [0, 0, 0];
 
 var alpha = [];
@@ -12,12 +12,15 @@ var gamma = [];
 var totalAlpha = [];
 var totalBeta = [];
 var totalGamma = [];
+var totalYaw = [];
 var calibAlpha = 0;
 var calibBeta = 0;
 var calibGamma = 0;
+var calibYaw = 0;
 var diffAlpha = 0;
 var diffBeta = 0;
 var diffGamma = 0;
+var diffYaw = 0;
 var smoothedAlpha = 0;
 var smoothedBeta = 0;
 var smoothedGamma = 0;
@@ -36,9 +39,10 @@ var message = "";
 var vibration = 0;
 var previousMotor;
 
-var VIBRATION_MAX = 255; // Needs to be <= 255
-var DEAD_ZONE_ANGLE = 2;
+var VIBRATION_MAX = 150; // Needs to be <= 255
+var DEAD_ZONE_ANGLE = 4;
 var ANGLE_MAX = 30;
+var yaw = 0;
 
 function showTime() {
     "use strict";
@@ -75,6 +79,7 @@ function addLog(msg) {
         Android.addLog(msg);
     }
 }
+
 function orient() {
     "use strict";
     var handler = function (event) {
@@ -126,20 +131,37 @@ function orient() {
             var secs = date.getSeconds().toString();
             var mil = date.getMilliseconds().toString();
             message += (" T:" + hours + ":" + mins + ":" + secs + ":" + mil + "\n");
-
-//            var absoluteSupported = event.absolute;
-//            if (absoluteSupported) {
-//                addLog("Using earth based orientation");
-//            } else {
-//                addLog("Using device based orientation");
-//            }
         }
-
     };
 
+    var orientationHandler = function(eventData) {
+
+            if (eventData === null) {
+                addLog("Event Fired, but null :(");
+                return;
+            }
+            var acceleration = eventData.accelerationIncludingGravity;
+            var g = [0,0,0];
+
+            g[0] = acceleration.x;
+            g[1] = acceleration.y;
+            g[2] = acceleration.z;
+
+            var norm_Of_g = Math.sqrt(g[0] * g[0] + g[1] * g[1] + g[2] * g[2]);
+            var yawRads = Math.atan2(g[0], g[1]);
+
+            yaw = convert("deg", yawRads);
+    };
 
     if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', handler, false);
+    }
+
+    if (window.DeviceMotionEvent) {
+        addLog("DeviceMotionEvent is supported!")
+        window.addEventListener('devicemotion', orientationHandler, false);
+    } else {
+        addLog("DeviceMotionEvent is NOT supported!");
     }
 }
 
@@ -199,10 +221,12 @@ function smoothAngles(calibrating) {
             totalAlpha.push(a);
             totalBeta.push(b);
             totalGamma.push(g);
+            totalYaw.push(yaw);
         } else {
             diffAlpha = convert("deg", Math.atan2(Math.sin(convert("rad", angleCalibrations[0] - calibAlpha)), Math.cos(convert("rad", angleCalibrations[0] - calibAlpha))));
             diffBeta = convert("deg", Math.atan2(Math.sin(convert("rad", angleCalibrations[1] - calibBeta)), Math.cos(convert("rad", angleCalibrations[1] - calibBeta))));
             diffGamma = convert("deg", Math.atan2(Math.sin(convert("rad", angleCalibrations[2] - calibGamma)), Math.cos(convert("rad", angleCalibrations[2] - calibGamma))));
+            diffYaw = yaw - calibYaw;
         }
     }
 }
@@ -280,6 +304,13 @@ function calibrateValues() {
     }
     calibGamma = tempTotal / i;
 
+    tempTotal = 0;
+    i = 0;
+    for(i in totalYaw) {
+        tempTotal += yaw;
+    }
+    calibYaw = tempTotal / i;
+
     message += "Calibrated!\n";
 }
 
@@ -304,7 +335,8 @@ function balanceController($scope, $interval) {
 
     $scope.getCalibValue = function (num) {
         if (num === 0) {
-            return (Math.round(calibAlpha * 100) / 100).toFixed(2);
+//            return (Math.round(calibAlpha * 100) / 100).toFixed(2);
+            return calibYaw;
         }
         if (num === 1) {
             return (Math.round(calibBeta * 100) / 100).toFixed(2);
@@ -316,7 +348,8 @@ function balanceController($scope, $interval) {
 
     $scope.getDiffValue = function (num) {
         if (num === 0) {
-            return (Math.round(diffAlpha * 100) / 100).toFixed(2);
+//            return (Math.round(diffAlpha * 100) / 100).toFixed(2);
+            return diffYaw;
         }
         if (num === 1) {
             return (Math.round(diffBeta * 100) / 100).toFixed(2);
@@ -357,12 +390,15 @@ function balanceController($scope, $interval) {
         totalAlpha = [];
         totalBeta = [];
         totalGamma = [];
+        totalYaw = [];
         calibAlpha = 0;
         calibBeta = 0;
         calibGamma = 0;
+        calibYaw = 0;
         diffAlpha = 0;
         diffBeta = 0;
         diffGamma = 0;
+        diffYaw = 0;
         smoothedAlpha = 0;
         smoothedBeta = 0;
         smoothedGamma = 0;
@@ -395,7 +431,7 @@ function balanceController($scope, $interval) {
             if (calibTime % 1 === 0 && calibTime > 0) {
                 smoothAngles(true);
             }
-            if (calibTime > 150) {
+            if (calibTime > 10) { //TODO decide on correct calib time
                 playSound();
                 calibrateValues();
                 $scope.setScreen(3);
@@ -414,7 +450,7 @@ function balanceController($scope, $interval) {
             var motorSelect
             // TODO diffAlpha does NOT work well as a way of detecting which way the user is
             // leaning. Need to translate coordinate system from Earth to Device?
-            if (diffAlpha > 0) {
+            if (diffYaw > 0) {
                 motorSelect = "right"
 //               color = [255, 0, 0];
             } else {
@@ -427,8 +463,8 @@ function balanceController($scope, $interval) {
                 previousMotor = motorSelect;
             }
             
-            vibration = $scope.calculateVibration(diffBeta);
-
+            vibration = $scope.calculateVibration(diffYaw);
+            addLog("Yaw: " + String(diffYaw) + " Vib: " + String(vibration));
             $scope.sendBT(motorSelect, vibration);
             //var colorIntensity = Math.min(1, (Math.abs(diffBeta) / 30));
             //color.push(colorIntensity);
