@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.SeekBar;
 
 import java.util.concurrent.Executors;
@@ -43,8 +44,8 @@ public class MotorControlActivity extends Activity {
 
     private BLEMotorService mBLEMotorService;
 
-    private SeekBar motorControl = null;
     private View mView = null;
+    private Button mButtonSwitchMotors = null;
 
     private boolean mConnected = false;
 
@@ -96,6 +97,7 @@ public class MotorControlActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_motor_control);
         mView = findViewById(R.id.motor_control_layout);
+        mButtonSwitchMotors = (Button)findViewById(R.id.buttonSwitchMotors);
         setViewAndChildrenEnabled(mView, false);
 
         final Intent intent = getIntent();
@@ -176,30 +178,44 @@ public class MotorControlActivity extends Activity {
     private static final ScheduledExecutorService worker =
             Executors.newSingleThreadScheduledExecutor();
 
+    private static int queuedTasks = 0;
+
     public void identifyRight(View view) {
         mBLEMotorService.writeMotor("right", 50);
-
+        mButtonSwitchMotors.setClickable(false);
         // Turn the motor back off after 1 second
         Runnable task = new Runnable() {
             @Override
             public void run() {
                 mBLEMotorService.writeMotor("right", 0);
+                queuedTasks -= 1;
+                checkDisabledSwitchMotorButton();
             }
         };
+        queuedTasks += 1;
         worker.schedule(task, 1, TimeUnit.SECONDS);
     }
 
     public void identifyLeft(View view) {
         mBLEMotorService.writeMotor("left", 50);
-
+        mButtonSwitchMotors.setClickable(false);
         // Turn the motor back off after 1 second
         Runnable task = new Runnable() {
             @Override
             public void run() {
                 mBLEMotorService.writeMotor("left", 0);
+                queuedTasks -= 1;
+                checkDisabledSwitchMotorButton();
             }
         };
+        queuedTasks += 1;
         worker.schedule(task, 1, TimeUnit.SECONDS);
+    }
+
+    private void checkDisabledSwitchMotorButton() {
+        if (queuedTasks <= 0) {
+            mButtonSwitchMotors.setClickable(true);
+        }
     }
 
     public void switchMotors(View view) {
