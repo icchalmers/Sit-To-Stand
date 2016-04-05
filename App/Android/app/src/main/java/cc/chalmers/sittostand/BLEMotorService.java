@@ -156,11 +156,18 @@ public class BLEMotorService extends Service {
                 }
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 BluetoothDevice device = gatt.getDevice();
-                Log.e(TAG, "PANIC! Disconnected from device " + device.getAddress());
+                Log.e(TAG, "Disconnected from device " + device.getAddress());
                 gatt.close();
+                if (device == mBluetoothDeviceLeft) {
+                    mBluetoothGattLeft = null;
+                }
+                if (device == mBluetoothDeviceRight) {
+                    mBluetoothGattRight = null;
+                }
+                broadcastUpdate(ACTION_MOTORS_DISCONNECTED);
                 updateState(State.UNKNOWN);
             } else {
-                Log.e(TAG, "Weird connection state change! " + gatt.getDevice().getAddress());
+                Log.e(TAG, "PANIC! Weird connection state change! " + gatt.getDevice().getAddress());
             }
         }
 
@@ -296,9 +303,15 @@ public class BLEMotorService extends Service {
      */
     public void disconnect() {
         Log.w(TAG, "Should be disconnecting both devices...");
-        if (mBluetoothAdapter == null || mBluetoothDeviceLeft == null || mBluetoothDeviceRight == null) {
+        if (mBluetoothAdapter == null) {
             Log.w(TAG, "BluetoothAdapter not initialized");
             return;
+        }
+        if (mBluetoothGattLeft != null) {
+            mBluetoothGattLeft.disconnect();
+        }
+        if (mBluetoothGattRight != null) {
+            mBluetoothGattRight.disconnect();
         }
     }
 
@@ -307,8 +320,16 @@ public class BLEMotorService extends Service {
      * released properly.
      */
     public void close() {
-        mBluetoothDeviceRight = null;
-        mBluetoothDeviceLeft = null;
+        if (mBluetoothGattLeft != null) {
+            mBluetoothGattLeft.close();
+        }
+
+        if (mBluetoothGattRight != null) {
+            mBluetoothGattRight.close();
+        }
+        disconnect();
+        mBluetoothGattLeft = null;
+        mBluetoothGattRight = null;
     }
 
 
@@ -422,12 +443,18 @@ public class BLEMotorService extends Service {
     private void doReady() {
         broadcastUpdate(ACTION_MOTORS_READY);
     }
+
     private void doReset() {
-        //TODO
+        // This is not a true reset and the states wont quite match - requesting a disconnect on the
+        // BLE connections does not happen instantly so state will enter idle erroneously when only
+        // one of the motors has been disconnected.
+        close();
+        updateState(State.IDLE);
     }
 
     private void doUnknown() {
-        //TODO
+        Log.e(TAG,"Entered an unknown state - performing reset!");
+        updateState(State.RESET);
     }
 
     private void broadcastUpdate(final String action) {

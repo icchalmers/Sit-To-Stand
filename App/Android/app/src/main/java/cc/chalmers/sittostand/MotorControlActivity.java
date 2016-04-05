@@ -79,6 +79,7 @@ public class MotorControlActivity extends Activity {
                 invalidateOptionsMenu();
             } else if (BLEMotorService.ACTION_MOTORS_DISCONNECTED.equals(action)) {
                 mConnected = false;
+                setViewAndChildrenEnabled(mView, false);
                 invalidateOptionsMenu();
             } else if (BLEMotorService.ACTION_MOTORS_READY.equals(action)) {
                 setViewAndChildrenEnabled(mView, true);

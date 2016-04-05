@@ -84,6 +84,8 @@ public class Screen extends Activity {
 		}
 
 		// Bind to the existing BLEMotor service (at least, it should already exist...)
+		// The service is NOT designed to handle being controlled by multiple activities at the same
+		// time so there are some pretty nasty bugs waiting if the user uses the back button...
 		Intent gattServiceIntent = new Intent(this, BLEMotorService.class);
 		bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
