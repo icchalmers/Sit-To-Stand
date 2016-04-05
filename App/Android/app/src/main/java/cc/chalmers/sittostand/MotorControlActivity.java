@@ -65,6 +65,11 @@ public class MotorControlActivity extends Activity {
 
     private boolean mConnected = false;
 
+    private static final ScheduledExecutorService identifyMotorWorker =
+            Executors.newSingleThreadScheduledExecutor();
+
+    private static int queuedIDTasks = 0;
+
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -189,41 +194,43 @@ public class MotorControlActivity extends Activity {
         return intentFilter;
     }
 
-    private static final ScheduledExecutorService identifyMotorWorker =
-            Executors.newSingleThreadScheduledExecutor();
-
-    private static int queuedIDTasks = 0;
-
+    /**
+     * Called when the user clicked the "Identify Right" button. Causes the right motor to vibrate
+     * for one second.
+     */
     public void identifyRight(View view) {
-        mBLEMotorService.writeMotor("right", 50);
-        mButtonSwitchMotors.setClickable(false);
-        // Turn the motor back off after 1 second
-        Runnable task = new Runnable() {
-            @Override
-            public void run() {
-                mBLEMotorService.writeMotor("right", 0);
-                queuedIDTasks -= 1;
-                checkDisabledSwitchMotorButton();
-            }
-        };
-        queuedIDTasks += 1;
-        identifyMotorWorker.schedule(task, 1, TimeUnit.SECONDS);
+        pulseMotor("right", 50, 1000);
     }
 
+    /**
+     * Called when the user clicked the "Identify Left" button. Causes the left motor to vibrate for
+     * one second.
+     */
     public void identifyLeft(View view) {
-        mBLEMotorService.writeMotor("left", 50);
+        pulseMotor("left", 50, 1000);
+    }
+
+    /**
+     * Pulse a motor for a set duration
+     *
+     * @param motor: "left" or "right"
+     * @param vibrationValue: integer from 0 to 255
+     * @param time: pulse duration in milliseconds. Keep it > 50.
+     */
+    private void pulseMotor(final String motor, int vibrationValue, int time) {
+        mBLEMotorService.writeMotor(motor, vibrationValue);
         mButtonSwitchMotors.setClickable(false);
         // Turn the motor back off after 1 second
         Runnable task = new Runnable() {
             @Override
             public void run() {
-                mBLEMotorService.writeMotor("left", 0);
+                mBLEMotorService.writeMotor(motor, 0);
                 queuedIDTasks -= 1;
                 checkDisabledSwitchMotorButton();
             }
         };
         queuedIDTasks += 1;
-        identifyMotorWorker.schedule(task, 1, TimeUnit.SECONDS);
+        identifyMotorWorker.schedule(task, time, TimeUnit.MILLISECONDS);
     }
 
     // Check if a motor identification is still in progress.
