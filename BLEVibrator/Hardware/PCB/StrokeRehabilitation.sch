@@ -1,0 +1,501 @@
+EESchema Schematic File Version 2
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:IainPersonalLibrary
+LIBS:StrokeRehabilitation-cache
+EELAYER 25 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L MOSFET_N Q1
+U 1 1 56C747A4
+P 9650 2950
+F 0 "Q1" H 9660 3120 50  0000 R CNN
+F 1 "MOSFET_N" H 9600 2800 50  0000 R CNN
+F 2 "IainPersonalLibrary:MCPH3_SOT-323" H 9650 2950 60  0001 C CNN
+F 3 "" H 9650 2950 60  0000 C CNN
+	1    9650 2950
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R3
+U 1 1 56C747A5
+P 9200 3300
+F 0 "R3" V 9280 3300 50  0000 C CNN
+F 1 "50k" V 9200 3300 50  0000 C CNN
+F 2 "FabLibrary:C_1206_HandSoldering_IainEdit" V 9130 3300 50  0001 C CNN
+F 3 "" H 9200 3300 50  0000 C CNN
+	1    9200 3300
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C3
+U 1 1 56C747A6
+P 9300 2300
+F 0 "C3" H 9325 2400 50  0000 L CNN
+F 1 "100p" H 9325 2200 50  0000 L CNN
+F 2 "FabLibrary:C_1206_HandSoldering_IainEdit" H 9338 2150 50  0001 C CNN
+F 3 "" H 9300 2300 50  0000 C CNN
+	1    9300 2300
+	1    0    0    -1  
+$EndComp
+$Comp
+L VDD #PWR01
+U 1 1 56C747A7
+P 9750 1800
+F 0 "#PWR01" H 9750 1650 50  0001 C CNN
+F 1 "VDD" H 9750 1950 50  0000 C CNN
+F 2 "" H 9750 1800 50  0000 C CNN
+F 3 "" H 9750 1800 50  0000 C CNN
+	1    9750 1800
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR02
+U 1 1 56C747A8
+P 9750 3650
+F 0 "#PWR02" H 9750 3400 50  0001 C CNN
+F 1 "GND" H 9750 3500 50  0000 C CNN
+F 2 "" H 9750 3650 50  0000 C CNN
+F 3 "" H 9750 3650 50  0000 C CNN
+	1    9750 3650
+	1    0    0    -1  
+$EndComp
+$Comp
+L PWR_FLAG #FLG03
+U 1 1 56C747AA
+P 1300 1500
+F 0 "#FLG03" H 1300 1595 50  0001 C CNN
+F 1 "PWR_FLAG" H 1300 1680 50  0000 C CNN
+F 2 "" H 1300 1500 50  0000 C CNN
+F 3 "" H 1300 1500 50  0000 C CNN
+	1    1300 1500
+	-1   0    0    1   
+$EndComp
+$Comp
+L PWR_FLAG #FLG04
+U 1 1 56C747AB
+P 1300 1200
+F 0 "#FLG04" H 1300 1295 50  0001 C CNN
+F 1 "PWR_FLAG" H 1300 1380 50  0000 C CNN
+F 2 "" H 1300 1200 50  0000 C CNN
+F 3 "" H 1300 1200 50  0000 C CNN
+	1    1300 1200
+	1    0    0    -1  
+$EndComp
+$Comp
+L Brushed_DC_motor U3
+U 1 1 56C747AC
+P 9750 2350
+F 0 "U3" H 9900 2175 60  0000 C CNN
+F 1 "Brushed_DC_motor" H 9750 2600 60  0001 C CNN
+F 2 "IainPersonalLibrary:PrecisionMicrodrives_304_111_Connector_long" H 9750 2350 60  0001 C CNN
+F 3 "" H 9750 2350 60  0000 C CNN
+	1    9750 2350
+	0    -1   -1   0   
+$EndComp
+$Comp
+L JST_PH_01x02 P1
+U 1 1 56C7531A
+P 950 1350
+F 0 "P1" H 950 1500 50  0000 C CNN
+F 1 "JST_PH_01x02" V 1050 1350 50  0000 C CNN
+F 2 "IainPersonalLibrary:S2B_PH_SM4_TB" H 950 1350 50  0001 C CNN
+F 3 "" H 950 1350 50  0000 C CNN
+	1    950  1350
+	-1   0    0    -1  
+$EndComp
+$Comp
+L C C1
+U 1 1 56C75880
+P 4450 1500
+F 0 "C1" H 4475 1600 50  0000 L CNN
+F 1 "10uF" H 4475 1400 50  0000 L CNN
+F 2 "FabLibrary:C_1206_HandSoldering_IainEdit" H 4488 1350 50  0001 C CNN
+F 3 "" H 4450 1500 50  0000 C CNN
+	1    4450 1500
+	1    0    0    -1  
+$EndComp
+$Comp
+L VDD #PWR05
+U 1 1 56C758CB
+P 4450 1050
+F 0 "#PWR05" H 4450 900 50  0001 C CNN
+F 1 "VDD" H 4450 1200 50  0000 C CNN
+F 2 "" H 4450 1050 50  0000 C CNN
+F 3 "" H 4450 1050 50  0000 C CNN
+	1    4450 1050
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR06
+U 1 1 56C759DE
+P 4450 1800
+F 0 "#PWR06" H 4450 1550 50  0001 C CNN
+F 1 "GND" H 4450 1650 50  0000 C CNN
+F 2 "" H 4450 1800 50  0000 C CNN
+F 3 "" H 4450 1800 50  0000 C CNN
+	1    4450 1800
+	1    0    0    -1  
+$EndComp
+$Comp
+L RFD22301 U2
+U 1 1 56C7608E
+P 5400 3950
+F 0 "U2" H 4800 4650 50  0000 L CNN
+F 1 "RFD22301" H 5200 4450 50  0001 L CNN
+F 2 "IainPersonalLibrary:RFD22301_RFDuino" H 5200 4450 50  0001 L CNN
+F 3 "" H 5400 3950 60  0000 C CNN
+	1    5400 3950
+	-1   0    0    1   
+$EndComp
+$Comp
+L D_Schottky_Small D3
+U 1 1 56CB058B
+P 10150 2300
+F 0 "D3" H 10100 2380 50  0000 L CNN
+F 1 "D_Schottky_Small" H 9870 2220 50  0000 L CNN
+F 2 "IainPersonalLibrary:SOD-123_a" V 10150 2300 50  0001 C CNN
+F 3 "" V 10150 2300 50  0000 C CNN
+	1    10150 2300
+	0    1    1    0   
+$EndComp
+$Comp
+L LED D1
+U 1 1 56CB0BBE
+P 6700 3000
+F 0 "D1" H 6700 3100 50  0000 C CNN
+F 1 "LED" H 6700 2900 50  0000 C CNN
+F 2 "FabLibrary:C_1206_HandSoldering_IainEdit" H 6700 3000 50  0001 C CNN
+F 3 "" H 6700 3000 50  0000 C CNN
+	1    6700 3000
+	0    -1   -1   0   
+$EndComp
+$Comp
+L LED D2
+U 1 1 56CB0C01
+P 7000 3000
+F 0 "D2" H 7000 3100 50  0000 C CNN
+F 1 "LED" H 7000 2900 50  0000 C CNN
+F 2 "FabLibrary:C_1206_HandSoldering_IainEdit" H 7000 3000 50  0001 C CNN
+F 3 "" H 7000 3000 50  0000 C CNN
+	1    7000 3000
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R2
+U 1 1 56CB0C84
+P 7000 3450
+F 0 "R2" V 7080 3450 50  0000 C CNN
+F 1 "500" V 7000 3450 50  0000 C CNN
+F 2 "FabLibrary:C_1206_HandSoldering_IainEdit" V 6930 3450 50  0001 C CNN
+F 3 "" H 7000 3450 50  0000 C CNN
+	1    7000 3450
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R1
+U 1 1 56CB0CC9
+P 6700 3450
+F 0 "R1" V 6780 3450 50  0000 C CNN
+F 1 "500" V 6700 3450 50  0000 C CNN
+F 2 "FabLibrary:C_1206_HandSoldering_IainEdit" V 6630 3450 50  0001 C CNN
+F 3 "" H 6700 3450 50  0000 C CNN
+	1    6700 3450
+	1    0    0    -1  
+$EndComp
+$Comp
+L CONN_01X05 P2
+U 1 1 56CB0CFA
+P 3750 4050
+F 0 "P2" H 3750 4350 50  0000 C CNN
+F 1 "CONN_01X05" V 3850 4050 50  0000 C CNN
+F 2 "IainPersonalLibrary:RFDuino_programming_header" H 3750 4050 50  0001 C CNN
+F 3 "" H 3750 4050 50  0000 C CNN
+	1    3750 4050
+	-1   0    0    -1  
+$EndComp
+$Comp
+L C C2
+U 1 1 56CB195F
+P 4300 3950
+F 0 "C2" H 4325 4050 50  0000 L CNN
+F 1 "100nF" H 4325 3850 50  0000 L CNN
+F 2 "FabLibrary:C_1206_HandSoldering_IainEdit" H 4338 3800 50  0001 C CNN
+F 3 "" H 4300 3950 50  0000 C CNN
+	1    4300 3950
+	0    1    1    0   
+$EndComp
+$Comp
+L VDD #PWR07
+U 1 1 56CB1B18
+P 4200 3150
+F 0 "#PWR07" H 4200 3000 50  0001 C CNN
+F 1 "VDD" H 4200 3300 50  0000 C CNN
+F 2 "" H 4200 3150 50  0000 C CNN
+F 3 "" H 4200 3150 50  0000 C CNN
+	1    4200 3150
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR08
+U 1 1 56CB200B
+P 4200 4600
+F 0 "#PWR08" H 4200 4350 50  0001 C CNN
+F 1 "GND" H 4200 4450 50  0000 C CNN
+F 2 "" H 4200 4600 50  0000 C CNN
+F 3 "" H 4200 4600 50  0000 C CNN
+	1    4200 4600
+	1    0    0    -1  
+$EndComp
+NoConn ~ 4600 3650
+NoConn ~ 4600 4050
+$Comp
+L GND #PWR09
+U 1 1 56CB2639
+P 6250 4600
+F 0 "#PWR09" H 6250 4350 50  0001 C CNN
+F 1 "GND" H 6250 4450 50  0000 C CNN
+F 2 "" H 6250 4600 50  0000 C CNN
+F 3 "" H 6250 4600 50  0000 C CNN
+	1    6250 4600
+	1    0    0    -1  
+$EndComp
+$Comp
+L VDD #PWR010
+U 1 1 56CB3133
+P 6850 2500
+F 0 "#PWR010" H 6850 2350 50  0001 C CNN
+F 1 "VDD" H 6850 2650 50  0000 C CNN
+F 2 "" H 6850 2500 50  0000 C CNN
+F 3 "" H 6850 2500 50  0000 C CNN
+	1    6850 2500
+	1    0    0    -1  
+$EndComp
+Text GLabel 6300 4050 2    60   Input ~ 0
+motor
+NoConn ~ 6200 3950
+NoConn ~ 6200 3850
+Text GLabel 9000 2950 0    60   Input ~ 0
+motor
+$Comp
+L GND #PWR011
+U 1 1 56CB63BD
+P 1150 1550
+F 0 "#PWR011" H 1150 1300 50  0001 C CNN
+F 1 "GND" H 1150 1400 50  0000 C CNN
+F 2 "" H 1150 1550 50  0000 C CNN
+F 3 "" H 1150 1550 50  0000 C CNN
+	1    1150 1550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9750 3150 9750 3650
+Wire Wire Line
+	9200 3450 9200 3550
+Connection ~ 9750 3550
+Wire Wire Line
+	9300 2150 9300 1950
+Wire Wire Line
+	9300 2450 9300 2750
+Connection ~ 9200 2950
+Connection ~ 9200 3550
+Wire Wire Line
+	9000 2950 9450 2950
+Wire Wire Line
+	9200 2950 9200 3150
+Wire Wire Line
+	9200 3550 9750 3550
+Wire Wire Line
+	1150 1400 3000 1400
+Wire Wire Line
+	1300 1500 1300 1400
+Connection ~ 1300 1400
+Wire Wire Line
+	1300 1200 1300 1300
+Connection ~ 1300 1300
+Wire Wire Line
+	1600 1300 1600 2400
+Connection ~ 1600 1300
+Wire Wire Line
+	4450 1050 4450 1350
+Wire Wire Line
+	4100 1300 4450 1300
+Connection ~ 4450 1300
+Wire Wire Line
+	4450 1650 4450 1800
+Wire Wire Line
+	10150 1950 10150 2200
+Wire Wire Line
+	10150 2750 10150 2400
+Wire Wire Line
+	4200 3150 4200 3850
+Wire Wire Line
+	3950 3850 4600 3850
+Connection ~ 4200 3850
+Wire Wire Line
+	4600 3950 4450 3950
+Wire Wire Line
+	4150 3950 3950 3950
+Wire Wire Line
+	4600 4150 4150 4150
+Wire Wire Line
+	4150 4150 4150 4050
+Wire Wire Line
+	4150 4050 3950 4050
+Wire Wire Line
+	3950 4150 4100 4150
+Wire Wire Line
+	4100 4150 4100 4250
+Wire Wire Line
+	4100 4250 4600 4250
+Wire Wire Line
+	3950 4250 3950 4350
+Wire Wire Line
+	3950 4350 4600 4350
+Wire Wire Line
+	4200 4450 4600 4450
+Wire Wire Line
+	4200 4350 4200 4600
+Connection ~ 4200 4450
+Connection ~ 4200 4350
+Wire Wire Line
+	4600 3450 4500 3450
+Wire Wire Line
+	4500 3450 4500 4450
+Wire Wire Line
+	4500 3550 4600 3550
+Wire Wire Line
+	4500 3750 4600 3750
+Connection ~ 4500 3550
+Connection ~ 4500 4450
+Connection ~ 4500 3750
+Wire Wire Line
+	6200 3750 6250 3750
+Wire Wire Line
+	6250 3750 6250 4600
+Wire Wire Line
+	6200 4350 6250 4350
+Connection ~ 6250 4350
+Wire Wire Line
+	6200 4450 6250 4450
+Connection ~ 6250 4450
+Wire Wire Line
+	6850 2500 6850 2600
+Wire Wire Line
+	6700 2600 7000 2600
+Wire Wire Line
+	6700 2600 6700 2800
+Wire Wire Line
+	7000 2600 7000 2800
+Connection ~ 6850 2600
+Wire Wire Line
+	6700 3200 6700 3300
+Wire Wire Line
+	7000 3200 7000 3300
+Wire Wire Line
+	1150 1550 1150 1400
+Wire Wire Line
+	7000 3600 7000 4250
+Wire Wire Line
+	6700 3600 6700 4150
+Wire Wire Line
+	6200 4050 6300 4050
+Wire Wire Line
+	6700 4150 6200 4150
+Wire Wire Line
+	7000 4250 6200 4250
+Wire Wire Line
+	9300 1950 10150 1950
+Wire Wire Line
+	9750 1800 9750 2000
+Connection ~ 9750 1950
+Wire Wire Line
+	9750 2700 9750 2750
+Wire Wire Line
+	9300 2750 10150 2750
+Connection ~ 9750 2750
+$Comp
+L SWITCH_DPDT SW1
+U 1 1 56C7419A
+P 2250 2300
+F 0 "SW1" H 2250 2750 70  0000 C CNN
+F 1 "SWITCH_DPDT" H 2250 1850 70  0000 C CNN
+F 2 "IainPersonalLibrary:SlideSwitch_AYZ0202AGRLC" H 2250 2300 60  0001 C CNN
+F 3 "" H 2250 2300 60  0000 C CNN
+	1    2250 2300
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	1600 2400 1750 2400
+Wire Wire Line
+	1750 2600 1700 2600
+Wire Wire Line
+	1700 2600 1700 1400
+Connection ~ 1700 1400
+Wire Wire Line
+	2750 2500 2950 2500
+NoConn ~ 1750 2000
+NoConn ~ 1750 2200
+NoConn ~ 2750 2100
+$Comp
+L TPS737 U1
+U 1 1 56D57D31
+P 3600 1450
+F 0 "U1" H 3600 1125 60  0000 C CNN
+F 1 "TPS737" H 3600 1750 60  0000 C CNN
+F 2 "IainPersonalLibrary:SOT-223-5" H 3600 1450 60  0001 C CNN
+F 3 "" H 3600 1450 60  0000 C CNN
+	1    3600 1450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2950 2500 2950 1600
+Wire Wire Line
+	2950 1600 3100 1600
+Wire Wire Line
+	3000 1400 3000 1450
+Wire Wire Line
+	3000 1450 3100 1450
+NoConn ~ 4100 1600
+Wire Wire Line
+	1150 1300 3100 1300
+$EndSCHEMATC
