@@ -18,6 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 
 /**
  * For a set of BLEVibrators this activity allows you to connect and test the motors and assign to
@@ -100,25 +104,6 @@ public class MotorControlActivity extends Activity {
         mDeviceRightName = intent.getStringExtra(EXTRAS_DEVICE2_NAME);
         mDeviceRightAddress = intent.getStringExtra(EXTRAS_DEVICE2_ADDRESS);
 
-        motorControl = (SeekBar) findViewById(R.id.motorSlider);
-        motorControl.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mBLEMotorService.writeMotor("left", progress);
-                mBLEMotorService.writeMotor("right", progress);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                mBLEMotorService.writeMotor("left", seekBar.getProgress());
-                mBLEMotorService.writeMotor("right", seekBar.getProgress());
-            }
-        });
         ActionBar mActionBar = getActionBar();
         if(mActionBar != null) {
             mActionBar.setTitle("Motor Setup");
@@ -188,11 +173,37 @@ public class MotorControlActivity extends Activity {
         return intentFilter;
     }
 
-    public void disableMotors(View v){
-        if(mBLEMotorService != null) {
-            mBLEMotorService.writeMotor("left", 0);
-            mBLEMotorService.writeMotor("right", 0);
-        }
+    private static final ScheduledExecutorService worker =
+            Executors.newSingleThreadScheduledExecutor();
+
+    public void identifyRight(View view) {
+        mBLEMotorService.writeMotor("right", 50);
+
+        // Turn the motor back off after 1 second
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                mBLEMotorService.writeMotor("right", 0);
+            }
+        };
+        worker.schedule(task, 1, TimeUnit.SECONDS);
+    }
+
+    public void identifyLeft(View view) {
+        mBLEMotorService.writeMotor("left", 50);
+
+        // Turn the motor back off after 1 second
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                mBLEMotorService.writeMotor("left", 0);
+            }
+        };
+        worker.schedule(task, 1, TimeUnit.SECONDS);
+    }
+
+    public void switchMotors(View view) {
+        mBLEMotorService.switchMotors();
     }
 
     public void startCalibration(View v) {

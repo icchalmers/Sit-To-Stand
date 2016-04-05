@@ -316,6 +316,28 @@ public class BLEMotorService extends Service {
     }
 
     /**
+     * Switches the left and right motors.
+     *
+     * @return true if switch was successful.
+     */
+    public boolean switchMotors() {
+        if (mConnectionState == State.READY) {
+            BluetoothDevice tempDevice = mBluetoothDeviceLeft;
+            BluetoothGatt tempGatt = mBluetoothGattLeft;
+            BluetoothGattCharacteristic tempCharacteristic =  mCharacteristicLeft;
+            mBluetoothDeviceLeft = mBluetoothDeviceRight;
+            mBluetoothGattLeft = mBluetoothGattRight;
+            mCharacteristicLeft = mCharacteristicRight;
+            mBluetoothDeviceRight = tempDevice;
+            mBluetoothGattRight = tempGatt;
+            mCharacteristicRight = tempCharacteristic;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * After using a given BLE device, the app must call this method to ensure resources are
      * released properly.
      */
