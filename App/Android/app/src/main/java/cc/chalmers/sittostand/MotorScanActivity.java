@@ -37,7 +37,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelUuid;
-import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,13 +49,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.jar.Manifest;
 
-import static java.util.jar.Manifest.*;
 
 /**
- * Activity for scanning and displaying available Bluetooth LE devices.
+ * Activity for scanning and displaying available BLE Vibration Motors
  */
 public class MotorScanActivity extends ListActivity {
     private LeDeviceListAdapter mLeDeviceListAdapter;
@@ -100,11 +96,18 @@ public class MotorScanActivity extends ListActivity {
         checkLocationPermissions();
     }
 
+    /**
+     * Due to a bug in Android 6, some devices require location permissions otherwise BLE scans
+     * never return any devices. If the android version is 23 or higher, the app will request
+     * location permissions. The permission request response is reported in the
+     * @onRequestPermissionsResult callback.
+     */
     private final int PERMISSION_LOCATION_REQUEST_CODE = 1;
+
     private void checkLocationPermissions() {
-        if (Build.VERSION.SDK_INT >= 23){
+        if (Build.VERSION.SDK_INT >= 23) {
             int hasLocationPermission = checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION);
-            if( hasLocationPermission != PackageManager.PERMISSION_GRANTED) {
+            if (hasLocationPermission != PackageManager.PERMISSION_GRANTED) {
                 this.requestPermissions(
                         new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
                         PERMISSION_LOCATION_REQUEST_CODE);
@@ -121,7 +124,7 @@ public class MotorScanActivity extends ListActivity {
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             scanLeDevice(true);
         } else {
-            Toast.makeText(this,"NEED LOCATION PERMISSIONS", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "NEED LOCATION PERMISSIONS", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -231,14 +234,13 @@ public class MotorScanActivity extends ListActivity {
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        if(!firstMotorSelected) {
+        if (!firstMotorSelected) {
             firstMotorDevice = mLeDeviceListAdapter.getDevice(position);
             if (firstMotorDevice == null) return;
             mLeDeviceListAdapter.removeDevice(firstMotorDevice);
             getActionBar().setTitle("Select right vibrator");
             firstMotorSelected = true;
-        }
-        else {
+        } else {
             final BluetoothDevice secondDevice = mLeDeviceListAdapter.getDevice(position);
             if (secondDevice == null) return;
             final Intent intent = new Intent(this, MotorControlActivity.class);
@@ -265,13 +267,13 @@ public class MotorScanActivity extends ListActivity {
         }
 
         public void addDevice(BluetoothDevice device) {
-            if(!mLeDevices.contains(device)) {
+            if (!mLeDevices.contains(device)) {
                 mLeDevices.add(device);
             }
         }
 
         public void removeDevice(BluetoothDevice device) {
-            if(mLeDevices.contains(device)) {
+            if (mLeDevices.contains(device)) {
                 mLeDevices.remove(mLeDevices.indexOf(device));
                 this.notifyDataSetChanged();
             }
@@ -328,17 +330,17 @@ public class MotorScanActivity extends ListActivity {
 
     // Device scan callback.
     private ScanCallback mLeScanCallback = new ScanCallback() {
-            @Override
-            public void onScanResult(int callbackType, final ScanResult result) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mLeDeviceListAdapter.addDevice(result.getDevice());
-                        mLeDeviceListAdapter.notifyDataSetChanged();
-                    }
-                });
-            }
-        };
+        @Override
+        public void onScanResult(int callbackType, final ScanResult result) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mLeDeviceListAdapter.addDevice(result.getDevice());
+                    mLeDeviceListAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+    };
 
     static class ViewHolder {
         TextView deviceName;

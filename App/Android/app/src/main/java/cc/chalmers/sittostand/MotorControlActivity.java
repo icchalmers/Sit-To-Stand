@@ -36,7 +36,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.SeekBar;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -56,9 +55,7 @@ public class MotorControlActivity extends Activity {
     public static final String EXTRAS_DEVICE2_NAME = "DEVICE2_NAME";
     public static final String EXTRAS_DEVICE2_ADDRESS = "DEVICE2_ADDRESS";
 
-    private String mDeviceLeftName;
     private String mDeviceLeftAddress;
-    private String mDeviceRightName;
     private String mDeviceRightAddress;
 
     private BLEMotorService mBLEMotorService;
@@ -120,9 +117,7 @@ public class MotorControlActivity extends Activity {
         setViewAndChildrenEnabled(mView, false);
 
         final Intent intent = getIntent();
-        mDeviceLeftName = intent.getStringExtra(EXTRAS_DEVICE1_NAME);
         mDeviceLeftAddress = intent.getStringExtra(EXTRAS_DEVICE1_ADDRESS);
-        mDeviceRightName = intent.getStringExtra(EXTRAS_DEVICE2_NAME);
         mDeviceRightAddress = intent.getStringExtra(EXTRAS_DEVICE2_ADDRESS);
 
         ActionBar mActionBar = getActionBar();
@@ -194,10 +189,10 @@ public class MotorControlActivity extends Activity {
         return intentFilter;
     }
 
-    private static final ScheduledExecutorService worker =
+    private static final ScheduledExecutorService identifyMotorWorker =
             Executors.newSingleThreadScheduledExecutor();
 
-    private static int queuedTasks = 0;
+    private static int queuedIDTasks = 0;
 
     public void identifyRight(View view) {
         mBLEMotorService.writeMotor("right", 50);
@@ -207,12 +202,12 @@ public class MotorControlActivity extends Activity {
             @Override
             public void run() {
                 mBLEMotorService.writeMotor("right", 0);
-                queuedTasks -= 1;
+                queuedIDTasks -= 1;
                 checkDisabledSwitchMotorButton();
             }
         };
-        queuedTasks += 1;
-        worker.schedule(task, 1, TimeUnit.SECONDS);
+        queuedIDTasks += 1;
+        identifyMotorWorker.schedule(task, 1, TimeUnit.SECONDS);
     }
 
     public void identifyLeft(View view) {
@@ -223,29 +218,42 @@ public class MotorControlActivity extends Activity {
             @Override
             public void run() {
                 mBLEMotorService.writeMotor("left", 0);
-                queuedTasks -= 1;
+                queuedIDTasks -= 1;
                 checkDisabledSwitchMotorButton();
             }
         };
-        queuedTasks += 1;
-        worker.schedule(task, 1, TimeUnit.SECONDS);
+        queuedIDTasks += 1;
+        identifyMotorWorker.schedule(task, 1, TimeUnit.SECONDS);
     }
 
+    // Check if a motor identification is still in progress.
+    // If not, then re-enable the "Switch Motors" button.
     private void checkDisabledSwitchMotorButton() {
-        if (queuedTasks <= 0) {
+        if (queuedIDTasks <= 0) {
             mButtonSwitchMotors.setClickable(true);
         }
     }
 
+    // Called when the user clicks the "Switch Motors" button.
     public void switchMotors(View view) {
         mBLEMotorService.switchMotors();
     }
 
+    // Called when the user clicks the "Start Program" button.
+    // Starts a new fullscreen web browser activity.
     public void startCalibration(View v) {
         final Intent intent = new Intent(this, Screen.class);
         startActivity(intent);
     }
 
+    /**
+     * Enable/disable all components in a view.
+     *
+     * Code from http://stackoverflow.com/a/28509431
+     *
+     * @param view: viewgroup to change enabled state of
+     * @param enabled: new anabled status
+     */
     private static void setViewAndChildrenEnabled(View view, boolean enabled) {
         view.setEnabled(enabled);
         if (view instanceof ViewGroup) {
