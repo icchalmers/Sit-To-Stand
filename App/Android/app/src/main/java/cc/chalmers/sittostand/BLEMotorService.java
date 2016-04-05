@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Edited by Iain Chalmers, (C) 2016
+ *
+ * Based on com.example.android.bluetoothlegatt.BluetoothLeService.java Android sample code
  */
 
 package cc.chalmers.sittostand;
