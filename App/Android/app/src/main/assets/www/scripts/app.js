@@ -1,3 +1,10 @@
+// App settings variables
+var VIBRATION_MAX = 128; // Needs to be <= 255
+var DEAD_ZONE_ANGLE = 3; // Plus/Minus deadzone in degrees.
+var ANGLE_MAX = 30; // Angle at which the motors are set to VIBRATION_MAX
+var CALIBRATION_TIME = 50; // time to calibrate in 1/10ths of a second.
+
+// Global Variables
 var calibTime = 0;
 
 var audio;
@@ -32,13 +39,9 @@ var lastValue = 0;
 //Sent to Android to create file to log values
 var message = "";
 
-//Sent to Android to send message to Arduino
+//Sent to Android to control the motors
 var vibration = 0;
 var previousMotor;
-
-var VIBRATION_MAX = 128; // Needs to be <= 255
-var DEAD_ZONE_ANGLE = 2;
-var ANGLE_MAX = 30;
 
 function showTime() {
     "use strict";
@@ -397,7 +400,7 @@ function balanceController($scope, $interval) {
             if (calibTime % 1 === 0 && calibTime > 0) {
                 smoothAngles(true);
             }
-            if (calibTime > 150) {
+            if (calibTime > CALIBRATION_TIME) {
                 playSound();
                 calibrateValues();
                 $scope.setScreen(3);
