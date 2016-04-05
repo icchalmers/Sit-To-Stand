@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>GyroScope</title>
+
+    <!-- GyroScope references -->
+    <link href="css/index.css" rel="stylesheet" />
+    <link href="bootstrap/css/bootstrap-theme.css" rel="stylesheet" />
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <script src="scripts/app.js"></script>
+    <script src="angular-1.2.26/angular.js"></script>
+    <script src="angular-1.2.26/angular-touch.js"></script>
+</head>
+<body onload="setupSound();">
+    <div ng-app="" ng-controller="balanceController" class="full-size">
+        <button id="gobutton" class="btn btn-primary full-size" ng-click="setScreen(2); startCalib();" style="font-size:xx-large" ng-show="isScreen(1)">Start</button>
+        <div class="full-size" ng-show="isScreen(2)" ng-click="startOver()">
+        <div class="row">
+            <div class="col-xs-6">
+                <p id="time" style="font-size:x-large"></p>
+                <div class="progress">
+                    <div id="progress" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="30">
+                        <audio id="player" preload="auto">
+                            <source src="sounds/startTone.mp3" />
+                            <source src="sounds/startTone.wav" />
+                            Sound not available
+                        </audio>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                
+                <dl>
+                    <dt>Alpha</dt>
+                    <dd style="font-size:x-large">{{getAngleAverage(0)}} Degrees</dd>
+                    <dt>Beta</dt>
+                    <dd style="font-size:x-large">{{getAngleAverage(1)}} Degrees</dd>
+                    <dt>Gamma</dt>
+                    <dd style="font-size:x-large">{{getAngleAverage(2)}} Degrees</dd>
+                </dl>
+            </div>
+        </div>
+            </div>
+        <div class="full-size" ng-show="isScreen(3)" ng-click="startOver()">
+        <div class="row" ng-show="isScreen(3)">
+            <div class="col-xs-4" ng-show="isScreen(3)">
+                <div class="text-center">
+                    <h2>Continuous</h2>
+                    <dl>
+                        <dt>Alpha</dt>
+                        <dd style="font-size:x-large">{{getAngleAverage(0)}} Degrees</dd>
+                        <dt>Beta</dt>
+                        <dd style="font-size:x-large">{{getAngleAverage(1)}} Degrees</dd>
+                        <dt>Gamma</dt>
+                        <dd style="font-size:x-large">{{getAngleAverage(2)}} Degrees</dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="col-xs-4" ng-show="isScreen(3)">
+                <div class="text-center">
+                    <h2>Calibrated</h2>
+                    <dl>
+                        <dt>Alpha</dt>
+                        <dd style="font-size:x-large"> {{getCalibValue(0)}} Degrees</dd>
+                        <dt>Beta</dt>
+                        <dd style="font-size:x-large">{{getCalibValue(1)}} Degrees</dd>
+                        <dt>Gamma</dt>
+                        <dd style="font-size:x-large">{{getCalibValue(2)}} Degrees</dd>
+                    </dl>
+<!--                    <button id="done" class="btn btn-primary btn-block" ng-click="startOver()" ng-show="isScreen(3)">Done</button>-->
+                </div>
+            </div>
+            <div class="col-xs-4" ng-show="isScreen(3)">
+                <div class="text-center">
+                    <h2>Differential</h2>
+                    <dl>
+                        <dt>Alpha</dt>
+                        <dd style="font-size:x-large"> {{getDiffValue(0)}} Degrees</dd>
+                        <dt>Beta</dt>
+                        <dd style="font-size:x-large">{{getDiffValue(1)}} Degrees</dd>
+                        <dt>Gamma</dt>
+                        <dd style="font-size:x-large">{{getDiffValue(2)}} Degrees</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="row text-center" ng-show="isScreen(3)">
+            <h3>{{getTime()}}</h3>
+        </div>
+            </div>
+    </div>
+</body>
+</html>
