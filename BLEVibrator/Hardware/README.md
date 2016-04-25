@@ -8,4 +8,4 @@ The hardware for the Sit-To-Stand project can be split into three parts:
 
 # Cost
 
-The most expensive components are the RFDuino module, the LiPo batter and the vibration motor. At a rough guess, I would say a full vibration unit can be made in single quantity for < £30. Obviously making them in quantity would bring this down significantly.
+The most expensive components are the RFDuino module, the LiPo battery and the vibration motor. At a rough guess, I would say a full vibration unit can be made in single quantity for < £30. Obviously making them in quantity would bring this down significantly.
