@@ -38,6 +38,8 @@ public class Screen extends Activity {
 
 	private double yaw = 0;
 
+	private double deadzoneSize;
+
 	// Code to manage Service lifecycle.
 	private final ServiceConnection mServiceConnection = new ServiceConnection() {
 
@@ -67,7 +69,7 @@ public class Screen extends Activity {
 				"Android");
 
 		// Setup the sensor manager for calculating yaw (rotation about device Z).
-		// If the device doesn't have acceleromter sensors the app quits.
+		// If the device doesn't have accelerometer sensors the app quits.
 		// It would make sense to do this MUCH earlier in the user workflow but this will have to do
 		// for now.
 		mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
@@ -82,6 +84,9 @@ public class Screen extends Activity {
 			accelerometerSensorRunning = false;
 			finish();
 		}
+
+		final Intent intent = getIntent();
+		deadzoneSize =  intent.getDoubleExtra(MotorControlActivity.EXTRAS_DEADZONE, 0);
 
 		// Bind to the existing BLEMotor service (at least, it should already exist...)
 		// The service is NOT designed to handle being controlled by multiple activities at the same
@@ -197,6 +202,11 @@ public class Screen extends Activity {
         public void addLog(String message) {
             Log.d(TAG + "JS", message);
         }
+
+		@JavascriptInterface
+		public double getDeadzone() {
+			return deadzoneSize;
+		}
 
 		@JavascriptInterface
 		public void makeFile(String content) {

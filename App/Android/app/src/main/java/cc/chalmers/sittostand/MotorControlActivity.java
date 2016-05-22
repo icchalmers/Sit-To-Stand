@@ -36,6 +36,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -54,6 +55,7 @@ public class MotorControlActivity extends Activity {
     public static final String EXTRAS_DEVICE1_ADDRESS = "DEVICE1_ADDRESS";
     public static final String EXTRAS_DEVICE2_NAME = "DEVICE2_NAME";
     public static final String EXTRAS_DEVICE2_ADDRESS = "DEVICE2_ADDRESS";
+    public static final String EXTRAS_DEADZONE = "DEADZONE";
 
     private String mDeviceLeftAddress;
     private String mDeviceRightAddress;
@@ -62,6 +64,7 @@ public class MotorControlActivity extends Activity {
 
     private View mView = null;
     private Button mButtonSwitchMotors = null;
+    private EditText mDeadzoneEdit;
 
     private boolean mConnected = false;
 
@@ -119,6 +122,7 @@ public class MotorControlActivity extends Activity {
         setContentView(R.layout.activity_motor_control);
         mView = findViewById(R.id.motor_control_layout);
         mButtonSwitchMotors = (Button)findViewById(R.id.buttonSwitchMotors);
+        mDeadzoneEdit = (EditText)findViewById(R.id.editText_DeadZone);
         setViewAndChildrenEnabled(mView, false);
 
         final Intent intent = getIntent();
@@ -250,6 +254,8 @@ public class MotorControlActivity extends Activity {
     // Starts a new fullscreen web browser activity.
     public void startCalibration(View v) {
         final Intent intent = new Intent(this, Screen.class);
+        double deadzone = Double.parseDouble(mDeadzoneEdit.getText().toString());
+        intent.putExtra(EXTRAS_DEADZONE, deadzone);
         startActivity(intent);
     }
 
@@ -259,7 +265,7 @@ public class MotorControlActivity extends Activity {
      * Code from http://stackoverflow.com/a/28509431
      *
      * @param view: viewgroup to change enabled state of
-     * @param enabled: new anabled status
+     * @param enabled: new enabled status
      */
     private static void setViewAndChildrenEnabled(View view, boolean enabled) {
         view.setEnabled(enabled);
