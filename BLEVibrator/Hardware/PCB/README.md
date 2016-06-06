@@ -19,7 +19,7 @@ A lot of the parts were selected purely based on what I had to hand/what was che
 * Vibration motor is a Precision Microdrives P/N: 307-103
 * Battery is a 3.7 V, 400 mAh LiPo
 
-I'd like to experiment with changing are the vibration motor and the battery.
+I'd like to experiment with changing the vibration motor and the battery.
 
 The vibration motor runs at quite a high RPM, which makes it feel quite a bit weaker when the unit is worn on top of clothes. It also has a pretty nasty 650 mA starting current. The 308-103 motor might give a stronger vibration when worn over clothes, but would require a case redesign.
 
