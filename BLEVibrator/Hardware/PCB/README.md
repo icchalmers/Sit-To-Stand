@@ -9,10 +9,11 @@ Note that the PCB design has only been manufactured on the Denford. The footprin
 
 A lot of the parts were selected purely based on what I had to hand/what was cheap.
 
-* All the capacitors/resistors/LEDs are 1206 SMD
+* All the capacitors/resistors are 1206 SMD
+* LED is a Bivar SM1204BC-R/G
 * RFDuino is the SMT module variant
 * Battery header is an S2B-PH-SM4-TB(LF)(SN)
-* Slide switch is an AYZ0202AGRLC
+* Slide switch is an ALPS SSSS810701
 * Motor driver MOSFET is an MCH3479-TL-H
 * Voltage regulator is a TPS737
 * Vibration motor is a Precision Microdrives P/N: 307-103

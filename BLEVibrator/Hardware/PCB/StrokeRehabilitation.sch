@@ -28,6 +28,7 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
+LIBS:FabLibrary
 LIBS:IainPersonalLibrary
 LIBS:StrokeRehabilitation-cache
 EELAYER 25 0
@@ -199,36 +200,14 @@ F 3 "" V 10150 2300 50  0000 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L LED D1
-U 1 1 56CB0BBE
-P 6700 3000
-F 0 "D1" H 6700 3100 50  0000 C CNN
-F 1 "LED" H 6700 2900 50  0000 C CNN
-F 2 "FabLibrary:C_1206_HandSoldering_IainEdit" H 6700 3000 50  0001 C CNN
-F 3 "" H 6700 3000 50  0000 C CNN
-	1    6700 3000
-	0    -1   -1   0   
-$EndComp
-$Comp
-L LED D2
-U 1 1 56CB0C01
-P 7000 3000
-F 0 "D2" H 7000 3100 50  0000 C CNN
-F 1 "LED" H 7000 2900 50  0000 C CNN
-F 2 "FabLibrary:C_1206_HandSoldering_IainEdit" H 7000 3000 50  0001 C CNN
-F 3 "" H 7000 3000 50  0000 C CNN
-	1    7000 3000
-	0    -1   -1   0   
-$EndComp
-$Comp
 L R R2
 U 1 1 56CB0C84
-P 7000 3450
-F 0 "R2" V 7080 3450 50  0000 C CNN
-F 1 "500" V 7000 3450 50  0000 C CNN
-F 2 "FabLibrary:C_1206_HandSoldering_IainEdit" V 6930 3450 50  0001 C CNN
-F 3 "" H 7000 3450 50  0000 C CNN
-	1    7000 3450
+P 6900 3450
+F 0 "R2" V 6980 3450 50  0000 C CNN
+F 1 "500" V 6900 3450 50  0000 C CNN
+F 2 "FabLibrary:C_1206_HandSoldering_IainEdit" V 6830 3450 50  0001 C CNN
+F 3 "" H 6900 3450 50  0000 C CNN
+	1    6900 3450
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -252,17 +231,6 @@ F 2 "IainPersonalLibrary:RFDuino_programming_header" H 3750 4050 50  0001 C CNN
 F 3 "" H 3750 4050 50  0000 C CNN
 	1    3750 4050
 	-1   0    0    -1  
-$EndComp
-$Comp
-L C C2
-U 1 1 56CB195F
-P 4300 3950
-F 0 "C2" H 4325 4050 50  0000 L CNN
-F 1 "100nF" H 4325 3850 50  0000 L CNN
-F 2 "FabLibrary:C_1206_HandSoldering_IainEdit" H 4338 3800 50  0001 C CNN
-F 3 "" H 4300 3950 50  0000 C CNN
-	1    4300 3950
-	0    1    1    0   
 $EndComp
 $Comp
 L VDD #PWR07
@@ -302,12 +270,12 @@ $EndComp
 $Comp
 L VDD #PWR010
 U 1 1 56CB3133
-P 6850 2500
-F 0 "#PWR010" H 6850 2350 50  0001 C CNN
-F 1 "VDD" H 6850 2650 50  0000 C CNN
-F 2 "" H 6850 2500 50  0000 C CNN
-F 3 "" H 6850 2500 50  0000 C CNN
-	1    6850 2500
+P 6800 2350
+F 0 "#PWR010" H 6800 2200 50  0001 C CNN
+F 1 "VDD" H 6800 2500 50  0000 C CNN
+F 2 "" H 6800 2350 50  0000 C CNN
+F 3 "" H 6800 2350 50  0000 C CNN
+	1    6800 2350
 	1    0    0    -1  
 $EndComp
 Text GLabel 6300 4050 2    60   Input ~ 0
@@ -353,9 +321,6 @@ Wire Wire Line
 	1300 1200 1300 1300
 Connection ~ 1300 1300
 Wire Wire Line
-	1600 1300 1600 2400
-Connection ~ 1600 1300
-Wire Wire Line
 	4450 1050 4450 1350
 Wire Wire Line
 	4100 1300 4450 1300
@@ -372,9 +337,7 @@ Wire Wire Line
 	3950 3850 4600 3850
 Connection ~ 4200 3850
 Wire Wire Line
-	4600 3950 4450 3950
-Wire Wire Line
-	4150 3950 3950 3950
+	3950 3950 4600 3950
 Wire Wire Line
 	4600 4150 4150 4150
 Wire Wire Line
@@ -419,22 +382,13 @@ Wire Wire Line
 	6200 4450 6250 4450
 Connection ~ 6250 4450
 Wire Wire Line
-	6850 2500 6850 2600
+	6700 3150 6700 3300
 Wire Wire Line
-	6700 2600 7000 2600
-Wire Wire Line
-	6700 2600 6700 2800
-Wire Wire Line
-	7000 2600 7000 2800
-Connection ~ 6850 2600
-Wire Wire Line
-	6700 3200 6700 3300
-Wire Wire Line
-	7000 3200 7000 3300
+	6900 3150 6900 3300
 Wire Wire Line
 	1150 1550 1150 1400
 Wire Wire Line
-	7000 3600 7000 4250
+	6900 3600 6900 4250
 Wire Wire Line
 	6700 3600 6700 4150
 Wire Wire Line
@@ -442,7 +396,7 @@ Wire Wire Line
 Wire Wire Line
 	6700 4150 6200 4150
 Wire Wire Line
-	7000 4250 6200 4250
+	6900 4250 6200 4250
 Wire Wire Line
 	9300 1950 10150 1950
 Wire Wire Line
@@ -453,29 +407,6 @@ Wire Wire Line
 Wire Wire Line
 	9300 2750 10150 2750
 Connection ~ 9750 2750
-$Comp
-L SWITCH_DPDT SW1
-U 1 1 56C7419A
-P 2250 2300
-F 0 "SW1" H 2250 2750 70  0000 C CNN
-F 1 "SWITCH_DPDT" H 2250 1850 70  0000 C CNN
-F 2 "IainPersonalLibrary:SlideSwitch_AYZ0202AGRLC" H 2250 2300 60  0001 C CNN
-F 3 "" H 2250 2300 60  0000 C CNN
-	1    2250 2300
-	-1   0    0    -1  
-$EndComp
-Wire Wire Line
-	1600 2400 1750 2400
-Wire Wire Line
-	1750 2600 1700 2600
-Wire Wire Line
-	1700 2600 1700 1400
-Connection ~ 1700 1400
-Wire Wire Line
-	2750 2500 2950 2500
-NoConn ~ 1750 2000
-NoConn ~ 1750 2200
-NoConn ~ 2750 2100
 $Comp
 L TPS737 U1
 U 1 1 56D57D31
@@ -488,8 +419,6 @@ F 3 "" H 3600 1450 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	2950 2500 2950 1600
-Wire Wire Line
 	2950 1600 3100 1600
 Wire Wire Line
 	3000 1400 3000 1450
@@ -498,4 +427,40 @@ Wire Wire Line
 NoConn ~ 4100 1600
 Wire Wire Line
 	1150 1300 3100 1300
+$Comp
+L SWITCH_INV SW1
+U 1 1 5755A76A
+P 2200 2200
+F 0 "SW1" H 2000 2350 50  0000 C CNN
+F 1 "SWITCH_INV" H 2050 2050 50  0000 C CNN
+F 2 "IainPersonalLibrary:SlideSwitch_SSSS810701" H 2200 2200 50  0001 C CNN
+F 3 "" H 2200 2200 50  0000 C CNN
+	1    2200 2200
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	2950 1600 2950 2200
+Wire Wire Line
+	2950 2200 2700 2200
+Wire Wire Line
+	1700 2300 1600 2300
+Wire Wire Line
+	1600 2300 1600 1400
+Connection ~ 1600 1400
+Wire Wire Line
+	1700 2100 1700 1300
+Connection ~ 1700 1300
+$Comp
+L BI_LED_common_anode D1
+U 1 1 5755BF9A
+P 6800 2850
+F 0 "D1" H 7100 2950 50  0000 C CNN
+F 1 "BI_LED_common_anode" H 6910 2610 50  0001 C CNN
+F 2 "IainPersonalLibrary:Bi_LED_SM1204BC-RG" H 6800 2850 60  0001 C CNN
+F 3 "" H 6800 2850 60  0000 C CNN
+	1    6800 2850
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	6800 2350 6800 2500
 $EndSCHEMATC
