@@ -17,7 +17,9 @@
     (0 F.Cu signal)
     (31 B.Cu signal)
     (35 F.Paste user)
+    (36 B.SilkS user)
     (37 F.SilkS user)
+    (38 B.Mask user)
     (39 F.Mask user)
     (40 Dwgs.User user)
     (41 Cmts.User user)
@@ -63,7 +65,7 @@
     (grid_origin 128.55 147.5)
     (visible_elements 7FFFFF7F)
     (pcbplotparams
-      (layerselection 0x01000_00000001)
+      (layerselection 0x010a8_80000001)
       (usegerberextensions true)
       (excludeedgelayer true)
       (linewidth 0.100000)
