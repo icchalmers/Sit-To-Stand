@@ -3,7 +3,7 @@
   (general
     (links 86)
     (no_connects 0)
-    (area 137.474999 99.424999 169.620601 147.575001)
+    (area 134.275 97.15 172.105 151.075)
     (thickness 0.800001)
     (drawings 23)
     (tracks 300)
@@ -89,7 +89,7 @@
       (mirror false)
       (drillshape 0)
       (scaleselection 1)
-      (outputdirectory Gerbers/))
+      (outputdirectory ""))
   )
 
   (net 0 "")
@@ -192,13 +192,13 @@
     (add_net "Net-(U1-Pad7)")
   )
 
-  (module IainPersonalLibrary:Murata_capacitor_SMD_0805_reflow (layer F.Cu) (tedit 57689491) (tstamp 57684CC0)
+  (module IainPersonalLibrary:Murata_capacitor_SMD_0805_reflow (layer F.Cu) (tedit 576D6D3F) (tstamp 57684CC0)
     (at 163.7544 137.086 180)
     (descr "Resistor SMD 0805, reflow soldering, Vishay (see dcrcw.pdf)")
     (tags "resistor 0805")
     (path /5759DA68)
     (attr smd)
-    (fp_text reference C1 (at -2.6924 0.2032 180) (layer F.SilkS)
+    (fp_text reference C1 (at -2.1456 0.036 270) (layer F.SilkS)
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (fp_text value 1uF (at 0 2.1 180) (layer F.Fab) hide
@@ -225,7 +225,7 @@
     (tags "resistor 0805")
     (path /575A1196)
     (attr smd)
-    (fp_text reference C2 (at 1.016 -1.7128 180) (layer F.SilkS)
+    (fp_text reference C2 (at -2.1456 -0.0184 450) (layer F.SilkS)
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (fp_text value 1uF (at 0 2.1 180) (layer F.Fab) hide
@@ -734,7 +734,7 @@
       (net 16 "Net-(D2-Pad1)"))
   )
 
-  (module IainPersonalLibrary:RFD22301_RFDuino (layer F.Cu) (tedit 56AFC134) (tstamp 57684E0A)
+  (module IainPersonalLibrary:RFD22301_RFDuino (layer F.Cu) (tedit 576D6D09) (tstamp 57684E0A)
     (at 155.35 109.3 180)
     (path /56C7608E)
     (solder_mask_margin 0.1)
@@ -742,7 +742,7 @@
     (fp_text reference U3 (at -3.23296 -6.67352 180) (layer F.SilkS)
       (effects (font (size 1 1) (thickness 0.05)))
     )
-    (fp_text value RFD22301 (at 0 0 180) (layer F.SilkS)
+    (fp_text value RFD22301 (at 0 0 180) (layer F.SilkS) hide
       (effects (font (size 1 0.9) (thickness 0.05)))
     )
     (fp_text user "NO COPPER" (at -1.7526 5.715 180) (layer Cmts.User)
@@ -845,7 +845,7 @@
   (module IainPersonalLibrary:MCP73833-XXX_MF (layer F.Cu) (tedit 5768A336) (tstamp 57684DD2)
     (at 159.6396 138.102 270)
     (path /57597BCA)
-    (fp_text reference U1 (at 0 2.525 270) (layer F.SilkS)
+    (fp_text reference U1 (at 2.748 0.5896 360) (layer F.SilkS)
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (fp_text value MCP73833 (at 0 -2.85 270) (layer F.Fab) hide
