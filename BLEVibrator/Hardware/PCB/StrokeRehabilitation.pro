@@ -1,4 +1,4 @@
-update=3/1/2016 11:01:05 AM
+update=24/06/2016 16:01:35
 version=1
 last_client=kicad
 [pcbnew]
@@ -61,3 +61,13 @@ LibName29=valves
 LibName30=D:/Users/Iain.DESKTOP-7F8DRSI/Dropbox/FabAcademy/FabISP/FabLibrary
 LibName31=IainPersonalLibrary
 LibName32=C:/Users/Iain/Dropbox/FabAcademy/KiCadLibrary/IainPersonalLibrary
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=Pcbnew
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=60
