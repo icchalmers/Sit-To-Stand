@@ -53,6 +53,7 @@ F 0 "Q2" H 10100 2050 50  0000 R CNN
 F 1 "MOSFET_N" H 9800 1900 50  0001 R CNN
 F 2 "IainPersonalLibrary:MCPH3_SOT-323" H 9850 2050 60  0001 C CNN
 F 3 "" H 9850 2050 60  0000 C CNN
+F 4 "MCH3479-TL-H" H 9850 2050 60  0001 C CNN "manf#"
 	1    9850 2050
 	1    0    0    -1  
 $EndComp
@@ -64,6 +65,7 @@ F 0 "R8" H 9500 2400 50  0000 C CNN
 F 1 "50k" V 9400 2400 50  0000 C CNN
 F 2 "IainPersonalLibrary:Yageo_resistor_SMD_0805_reflow" V 9330 2400 50  0001 C CNN
 F 3 "" H 9400 2400 50  0000 C CNN
+F 4 "RC0805FR-0749K9L" H 9400 2400 60  0001 C CNN "manf#"
 	1    9400 2400
 	1    0    0    -1  
 $EndComp
@@ -75,6 +77,7 @@ F 0 "C4" H 9525 1450 50  0000 L CNN
 F 1 "100p" H 9525 1250 50  0000 L CNN
 F 2 "IainPersonalLibrary:Murata_capacitor_SMD_0805_reflow" H 9538 1200 50  0001 C CNN
 F 3 "" H 9500 1350 50  0000 C CNN
+F 4 "C0805C101J5GACTU" H 9500 1350 60  0001 C CNN "manf#"
 	1    9500 1350
 	1    0    0    -1  
 $EndComp
@@ -119,6 +122,8 @@ F 0 "U4" V 10100 1150 60  0000 C CNN
 F 1 "Brushed_DC_motor" H 9950 1600 60  0001 C CNN
 F 2 "IainPersonalLibrary:WireToBoard_1x2_TensionRelief" H 9950 1350 60  0001 C CNN
 F 3 "" H 9950 1350 60  0000 C CNN
+F 4 "307-103" V 9950 1350 60  0001 C CNN "manf#"
+F 5 "https://www.precisionmicrodrives.com/product/307-103-9mm-vibration-motor-25mm-type" V 9950 1350 60  0001 C CNN "kicost:PrecisionMicrodrives:link"
 	1    9950 1350
 	0    1    1    0   
 $EndComp
@@ -130,6 +135,7 @@ F 0 "C3" H 8425 2450 50  0000 L CNN
 F 1 "10uF" H 8425 2250 50  0000 L CNN
 F 2 "IainPersonalLibrary:Murata_capacitor_SMD_0805_reflow" H 8438 2200 50  0001 C CNN
 F 3 "" H 8400 2350 50  0000 C CNN
+F 4 "GRM21BR61C106KE15L" H 8400 2350 60  0001 C CNN "manf#"
 	1    8400 2350
 	1    0    0    -1  
 $EndComp
@@ -163,6 +169,7 @@ F 0 "U3" H 2000 5100 50  0000 L CNN
 F 1 "RFD22301" H 2400 4900 50  0001 L CNN
 F 2 "IainPersonalLibrary:RFD22301_RFDuino" H 2400 4900 50  0001 L CNN
 F 3 "" H 2600 4400 60  0000 C CNN
+F 4 "RFD22301" H 2600 4400 60  0001 C CNN "manf#"
 	1    2600 4400
 	-1   0    0    1   
 $EndComp
@@ -174,6 +181,7 @@ F 0 "R7" H 4800 4400 50  0000 C CNN
 F 1 "330" V 4700 4400 50  0000 C CNN
 F 2 "IainPersonalLibrary:Yageo_resistor_SMD_0805_reflow" V 4630 4400 50  0001 C CNN
 F 3 "" H 4700 4400 50  0000 C CNN
+F 4 "RC0805FR-07330RL" H 4700 4400 60  0001 C CNN "manf#"
 	1    4700 4400
 	1    0    0    -1  
 $EndComp
@@ -185,6 +193,7 @@ F 0 "R6" H 4600 4400 50  0000 C CNN
 F 1 "330" V 4500 4400 50  0000 C CNN
 F 2 "IainPersonalLibrary:Yageo_resistor_SMD_0805_reflow" V 4430 4400 50  0001 C CNN
 F 3 "" H 4500 4400 50  0000 C CNN
+F 4 "RC0805FR-07330RL" H 4500 4400 60  0001 C CNN "manf#"
 	1    4500 4400
 	1    0    0    -1  
 $EndComp
@@ -257,6 +266,7 @@ F 0 "SW1" H 6350 2350 50  0000 C CNN
 F 1 "SWITCH_INV" H 6350 2450 50  0001 C CNN
 F 2 "IainPersonalLibrary:SlideSwitch_SSSS810701" H 6400 2200 50  0001 C CNN
 F 3 "" H 6400 2200 50  0000 C CNN
+F 4 "SSSS810701" H 6400 2200 60  0001 C CNN "manf#"
 	1    6400 2200
 	-1   0    0    1   
 $EndComp
@@ -268,6 +278,7 @@ F 0 "D3" V 4800 3700 50  0000 C CNN
 F 1 "BI_LED_common_anode" H 4710 3660 50  0001 C CNN
 F 2 "IainPersonalLibrary:Bi_LED_SM1204BC-RG" H 4600 3900 60  0001 C CNN
 F 3 "" H 4600 3900 60  0000 C CNN
+F 4 "SM1204BC-R/G" V 4600 3900 60  0001 C CNN "manf#"
 	1    4600 3900
 	0    -1   -1   0   
 $EndComp
@@ -279,6 +290,7 @@ F 0 "BT1" H 4900 2400 50  0000 L CNN
 F 1 "1S LiPo" H 4900 2300 50  0000 L CNN
 F 2 "IainPersonalLibrary:BatteryCon_WireSolder_0.8mm" V 4800 2390 50  0001 C CNN
 F 3 "" V 4800 2390 50  0000 C CNN
+F 4 "https://www.kitronik.co.uk/2209-polymer-lithium-ion-battery-37v-400mah.html" H 4800 2350 60  0001 C CNN "kicost:Kitronik:link"
 	1    4800 2350
 	1    0    0    -1  
 $EndComp
@@ -290,6 +302,7 @@ F 0 "U1" H 3550 1850 60  0000 C CNN
 F 1 "MCP73833" H 3300 2580 60  0000 C CNN
 F 2 "IainPersonalLibrary:MCP73833-XXX_MF" H 3300 2200 60  0001 C CNN
 F 3 "" H 3300 2200 60  0000 C CNN
+F 4 "MCP73833T-FCI/MF" H 3300 2200 60  0001 C CNN "manf#"
 	1    3300 2200
 	1    0    0    -1  
 $EndComp
@@ -323,6 +336,7 @@ F 0 "R3" H 4000 2600 50  0000 C CNN
 F 1 "5k" V 3900 2600 50  0000 C CNN
 F 2 "IainPersonalLibrary:Yageo_resistor_SMD_0805_reflow" V 3830 2600 50  0001 C CNN
 F 3 "" H 3900 2600 50  0000 C CNN
+F 4 "RC0805FR-074K99L" H 3900 2600 60  0001 C CNN "manf#"
 	1    3900 2600
 	1    0    0    -1  
 $EndComp
@@ -334,6 +348,7 @@ F 0 "R2" H 2350 2000 50  0000 C CNN
 F 1 "330" V 2450 2000 50  0000 C CNN
 F 2 "IainPersonalLibrary:Yageo_resistor_SMD_0805_reflow" V 2380 2000 50  0001 C CNN
 F 3 "" H 2450 2000 50  0000 C CNN
+F 4 "RC0805FR-07330RL" H 2450 2000 60  0001 C CNN "manf#"
 	1    2450 2000
 	-1   0    0    1   
 $EndComp
@@ -345,6 +360,7 @@ F 0 "R1" H 2150 2000 50  0000 C CNN
 F 1 "330" V 2250 2000 50  0000 C CNN
 F 2 "IainPersonalLibrary:Yageo_resistor_SMD_0805_reflow" V 2180 2000 50  0001 C CNN
 F 3 "" H 2250 2000 50  0000 C CNN
+F 4 "RC0805FR-07330RL" H 2250 2000 60  0001 C CNN "manf#"
 	1    2250 2000
 	-1   0    0    1   
 $EndComp
@@ -356,6 +372,7 @@ F 0 "D1" V 2550 1700 50  0000 C CNN
 F 1 "BI_LED_common_anode" H 2460 1260 50  0001 C CNN
 F 2 "IainPersonalLibrary:Bi_LED_SM1204BC-RG" H 2350 1500 60  0001 C CNN
 F 3 "" H 2350 1500 60  0000 C CNN
+F 4 "SM1204BC-R/G" V 2350 1500 60  0001 C CNN "manf#"
 	1    2350 1500
 	0    1    -1   0   
 $EndComp
@@ -401,6 +418,7 @@ F 0 "R4" H 4250 2600 50  0000 C CNN
 F 1 "10k" V 4150 2600 50  0000 C CNN
 F 2 "IainPersonalLibrary:Yageo_resistor_SMD_0805_reflow" V 4080 2600 50  0001 C CNN
 F 3 "" H 4150 2600 50  0000 C CNN
+F 4 "RC0805FR-0710KL" H 4150 2600 60  0001 C CNN "manf#"
 	1    4150 2600
 	1    0    0    -1  
 $EndComp
@@ -423,6 +441,7 @@ F 0 "C1" H 1925 1500 50  0000 L CNN
 F 1 "1uF" H 1925 1300 50  0000 L CNN
 F 2 "IainPersonalLibrary:Murata_capacitor_SMD_0805_reflow" H 1938 1250 50  0001 C CNN
 F 3 "" H 1900 1400 50  0000 C CNN
+F 4 "GRM21BR71C105KA01L" H 1900 1400 60  0001 C CNN "manf#"
 	1    1900 1400
 	1    0    0    -1  
 $EndComp
@@ -434,6 +453,7 @@ F 0 "Q1" V 5300 2050 50  0000 R CNN
 F 1 "MOS_P" H 5450 1720 50  0001 R CNN
 F 2 "IainPersonalLibrary:Vishay_SOT-23" H 5450 1900 60  0001 C CNN
 F 3 "" H 5450 1900 60  0000 C CNN
+F 4 "SI2367DS-T1-GE3" V 5450 1900 60  0001 C CNN "manf#"
 	1    5450 1900
 	0    1    1    0   
 $EndComp
@@ -445,6 +465,7 @@ F 0 "D2" V 5700 1400 50  0000 C CNN
 F 1 "D_Schottky" H 5700 1450 50  0001 C CNN
 F 2 "IainPersonalLibrary:SOD-123F" H 5700 1550 50  0001 C CNN
 F 3 "" H 5700 1550 50  0000 C CNN
+F 4 "PMEG2015EH" V 5700 1550 60  0001 C CNN "manf#"
 	1    5700 1550
 	0    -1   -1   0   
 $EndComp
@@ -456,6 +477,7 @@ F 0 "R5" H 5300 1550 50  0000 C CNN
 F 1 "50k" V 5200 1550 50  0000 C CNN
 F 2 "IainPersonalLibrary:Yageo_resistor_SMD_0805_reflow" V 5130 1550 50  0001 C CNN
 F 3 "" H 5200 1550 50  0000 C CNN
+F 4 "RC0805FR-0749K9L" H 5200 1550 60  0001 C CNN "manf#"
 	1    5200 1550
 	1    0    0    -1  
 $EndComp
@@ -467,6 +489,7 @@ F 0 "C2" H 4475 2450 50  0000 L CNN
 F 1 "1uF" H 4475 2250 50  0000 L CNN
 F 2 "IainPersonalLibrary:Murata_capacitor_SMD_0805_reflow" H 4488 2200 50  0001 C CNN
 F 3 "" H 4450 2350 50  0000 C CNN
+F 4 "GRM21BR71C105KA01L" H 4450 2350 60  0001 C CNN "manf#"
 	1    4450 2350
 	1    0    0    -1  
 $EndComp
@@ -484,6 +507,7 @@ F 0 "D4" V 10350 1250 50  0000 C CNN
 F 1 "D_Schottky" H 10350 1300 50  0001 C CNN
 F 2 "IainPersonalLibrary:SOD-123F" H 10350 1400 50  0001 C CNN
 F 3 "" H 10350 1400 50  0000 C CNN
+F 4 "PMEG2015EH" V 10350 1400 60  0001 C CNN "manf#"
 	1    10350 1400
 	0    1    1    0   
 $EndComp
@@ -721,6 +745,7 @@ F 0 "U2" H 7690 1840 45  0000 L BNN
 F 1 "TPS73701_DRV_6" H 7460 2390 45  0000 L BNN
 F 2 "IainPersonalLibrary:TPS73701_DRV_6" H 7170 2430 20  0001 C CNN
 F 3 "" H 7140 2280 60  0000 C CNN
+F 4 "TPS73733DRVR" H 7750 2150 60  0001 C CNN "manf#"
 	1    7750 2150
 	1    0    0    -1  
 $EndComp
@@ -757,6 +782,7 @@ F 0 "CON1" H 1500 1650 50  0000 C CNN
 F 1 "USB-MICRO-B" H 1350 950 50  0000 C CNN
 F 2 "IainPersonalLibrary:Micro_USB_Amphenol_10118192-0001LF" H 1200 1200 50  0001 C CNN
 F 3 "" H 1200 1200 50  0000 C CNN
+F 4 "10118192-0001LF" H 1200 1300 60  0001 C CNN "manf#"
 	1    1200 1300
 	1    0    0    -1  
 $EndComp
@@ -801,6 +827,7 @@ F 0 "R10" V 5680 4550 50  0000 C CNN
 F 1 "2.2M" V 5600 4550 50  0000 C CNN
 F 2 "Resistors_SMD:R_0603" V 5530 4550 50  0001 C CNN
 F 3 "" H 5600 4550 50  0000 C CNN
+F 4 "CRCW06032M20FKEA" V 5600 4550 60  0001 C CNN "manf#"
 	1    5600 4550
 	1    0    0    -1  
 $EndComp
@@ -816,6 +843,7 @@ F 0 "R9" V 5680 3950 50  0000 C CNN
 F 1 "10M" V 5600 3950 50  0000 C CNN
 F 2 "Resistors_SMD:R_0603" V 5530 3950 50  0001 C CNN
 F 3 "" H 5600 3950 50  0000 C CNN
+F 4 "CRCW060310M0FKEA" V 5600 3950 60  0001 C CNN "manf#"
 	1    5600 3950
 	1    0    0    -1  
 $EndComp
@@ -827,6 +855,7 @@ F 0 "C5" H 5925 4650 50  0000 L CNN
 F 1 "100n" H 5925 4450 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0603" H 5938 4400 50  0001 C CNN
 F 3 "" H 5900 4550 50  0000 C CNN
+F 4 "C1608X7R1E104K080AA" H 5900 4550 60  0001 C CNN "manf#"
 	1    5900 4550
 	1    0    0    -1  
 $EndComp
