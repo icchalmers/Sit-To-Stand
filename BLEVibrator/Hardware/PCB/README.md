@@ -1,6 +1,6 @@
 # BLE Vibrator: PCB
 
-The PCB was designed in KiCAD, with the intention of using cheap 2-layer fab houses. Specifically, the board was designed with [OSH Park's design rules]{http://docs.oshpark.com/design-tools/kicad/kicad-design-rules/}.
+The PCB was designed in KiCAD, with the intention of using cheap 2-layer fab houses. Specifically, the board was designed with [OSH Park's design rules]{http://docs.oshpark.com/design-tools/kicad/kicad-design-rules/).
 
 # BOM 
 
