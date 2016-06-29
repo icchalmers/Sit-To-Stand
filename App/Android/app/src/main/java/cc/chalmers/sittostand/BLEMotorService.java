@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Edited by Iain Chalmers, (C) 2016
+ *
+ * Based on com.example.android.bluetoothlegatt.BluetoothLeService.java Android sample code
  */
 
 package cc.chalmers.sittostand;
@@ -36,8 +40,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * Service for managing connection and data communication with a GATT server hosted on a
- * given Bluetooth LE device.
+ * Service for managing connection and data communication with a GATT server hosted on an RFDuino
+ * based BLE Vibration Motor device.
  */
 public class BLEMotorService extends Service {
     private final static String TAG = BLEMotorService.class.getSimpleName();
@@ -51,17 +55,23 @@ public class BLEMotorService extends Service {
     private BluetoothGattCharacteristic mCharacteristicLeft;
     private BluetoothGattCharacteristic mCharacteristicRight;
 
-
-    private ConcurrentLinkedQueue<GattCharacteristicWriteOperation> mQueue;
-    private ConcurrentHashMap<String, BluetoothGatt> mGatts;
-    private AsyncTask<Void, Void, Void> mCurrentOperationTimeout;
     private static boolean BLEBusy;
     private GattCharacteristicWriteOperation mCurrentOperation;
     private GattCharacteristicWriteOperation mCurrentLeftOperation;
     private GattCharacteristicWriteOperation mCurrentRightOperation;
 
+    /**
+     * "State" type is used to define the current state of the service.
+     *
+     * In general, the program flow is to connect to both motors, then discover their services, then
+     * do an initial write to each motor to make sure they are off and to then wait for write
+     * commands.
+     *
+     * The logic for switching between states is a rocky when anything unexpected happens e.g. one
+     * of the motors disconnects. In this case a general catch all of "UNKNOWN" state is use and the
+     * state machine attempts to reset and start again.
+     */
     public enum State {
-        UNKNOWN,
         IDLE,
         CONNECTING_LEFT,
         CONNECTED_LEFT,
@@ -75,11 +85,11 @@ public class BLEMotorService extends Service {
         INITIAL_WRITE_RIGHT,
         READY,
         DISCONNECTING,
-        RESET
+        RESET,
+        UNKNOWN
     }
 
     private State mConnectionState = State.UNKNOWN;
-
 
     public final static String ACTION_MOTORS_CONNECTED =
             "cc.chalmers.BLEMotorService.ACTION_MOTORS_CONNECTED";
@@ -131,13 +141,14 @@ public class BLEMotorService extends Service {
             Log.e(TAG, "Unable to obtain a BluetoothAdapter.");
             return false;
         }
-        mQueue = new ConcurrentLinkedQueue<>();
-        mGatts = new ConcurrentHashMap<>();
         BLEBusy = false;
         mConnectionState = State.IDLE;
         return true;
     }
 
+    /**
+     * mGattCallback is the BLE Gatt callback used to report the outcome of most BLE Gatt actions.
+     */
     private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
@@ -165,9 +176,13 @@ public class BLEMotorService extends Service {
                     mBluetoothGattRight = null;
                 }
                 broadcastUpdate(ACTION_MOTORS_DISCONNECTED);
+
+                // Going to UNKNOWN is cludgy. Really the state machine should handle the
+                // disconnection of one device followed cleanly by disconnecting the other and then
+                // going to IDLE. Going to UNKNOWN is a buggy quick-fix.
                 updateState(State.UNKNOWN);
             } else {
-                Log.e(TAG, "PANIC! Weird connection state change! " + gatt.getDevice().getAddress());
+                Log.e(TAG, "PANIC! Unknown connection state change! " + gatt.getDevice().getAddress());
             }
         }
 
@@ -219,6 +234,9 @@ public class BLEMotorService extends Service {
         }
     };
 
+    /**
+     * Add a GattCharacteristicWriteOperation to the write queue.
+     */
     private synchronized void queueWrite(GattCharacteristicWriteOperation operation) {
         if(operation.getGatt() == mBluetoothGattLeft){
             Log.d(TAG,"Write to left motor queued");
@@ -231,10 +249,17 @@ public class BLEMotorService extends Service {
         nextWrite();
     }
 
+    /**
+     * nextWrite should be called any time a new write operation is added to the queue or whenever
+     * a previous write operation finishes.
+     *
+     * The write queue is only one deep for each motor. This means that of writes are being
+     * performed too quickly, only the most recent write operation to that motor will be performed.
+     */
     private synchronized void nextWrite() {
         // This is sloppy but simple. Left motor always gets write priority
         if(BLEBusy){
-            Log.w(TAG,"BLE busy! Try again later...");
+            Log.w(TAG,"BLE busy! Trying again later...");
             return;
         }
         if(mCurrentLeftOperation != null) {
@@ -252,6 +277,10 @@ public class BLEMotorService extends Service {
         }
     }
 
+    /**
+     * Perform the actual write to the BLE GATT Characteristic. Response is asynchronous via the
+     * "mGattCallback" callback.
+     */
     private synchronized void doWrite(GattCharacteristicWriteOperation operation) {
         BLEBusy = true;
         Log.d(TAG,"Write started...");
@@ -302,7 +331,7 @@ public class BLEMotorService extends Service {
      * callback.
      */
     public void disconnect() {
-        Log.w(TAG, "Should be disconnecting both devices...");
+        Log.w(TAG, "Disconnecting both devices...");
         if (mBluetoothAdapter == null) {
             Log.w(TAG, "BluetoothAdapter not initialized");
             return;
@@ -355,6 +384,13 @@ public class BLEMotorService extends Service {
     }
 
 
+    /**
+     * Used to write a vibration value to the given motor.
+     *
+     * @param motor: "left" or "right".
+     * @param value: An integer from 0 to 255.
+     * @return returns "true" if the write was successfully queued, "false" otherwise.
+     */
     public boolean writeMotor(String motor, int value) {
         if (mBluetoothAdapter == null || mBluetoothDeviceLeft == null || mBluetoothDeviceRight == null) {
             Log.w(TAG, "BluetoothAdapter not initialized");
@@ -393,6 +429,9 @@ public class BLEMotorService extends Service {
     }
 
 
+    /**
+     * Used to update the current state of the state machine governing the service.
+     */
     private void updateState(State newState) {
         mConnectionState = newState;
         Log.d("CurrentState", mConnectionState.name());
@@ -468,7 +507,7 @@ public class BLEMotorService extends Service {
 
     private void doReset() {
         // This is not a true reset and the states wont quite match - requesting a disconnect on the
-        // BLE connections does not happen instantly so state will enter idle erroneously when only
+        // BLE connections does not happen instantly so state will enter IDLE erroneously when only
         // one of the motors has been disconnected.
         close();
         updateState(State.IDLE);

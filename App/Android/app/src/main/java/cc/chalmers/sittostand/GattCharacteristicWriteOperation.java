@@ -1,3 +1,10 @@
+/**
+ * Based on code from Nordic Semiconductor:
+ *
+ * https://github.com/NordicSemiconductor/puck-central-android/tree/master/PuckCentral/app/src/main/java/no/nordicsemi/puckcentral/bluetooth/gatt
+ *
+ */
+
 package cc.chalmers.sittostand;
 
 import android.bluetooth.BluetoothGatt;

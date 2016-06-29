@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2013 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Edited by Iain Chalmers, (C) 2016
+ *
+ * Based on com.example.android.bluetoothlegatt.DeviceScanActivity.java Android sample code
+ */
 package cc.chalmers.sittostand;
 
 
@@ -17,7 +36,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.SeekBar;
+import android.widget.EditText;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -36,18 +55,23 @@ public class MotorControlActivity extends Activity {
     public static final String EXTRAS_DEVICE1_ADDRESS = "DEVICE1_ADDRESS";
     public static final String EXTRAS_DEVICE2_NAME = "DEVICE2_NAME";
     public static final String EXTRAS_DEVICE2_ADDRESS = "DEVICE2_ADDRESS";
+    public static final String EXTRAS_DEADZONE = "DEADZONE";
 
-    private String mDeviceLeftName;
     private String mDeviceLeftAddress;
-    private String mDeviceRightName;
     private String mDeviceRightAddress;
 
     private BLEMotorService mBLEMotorService;
 
     private View mView = null;
     private Button mButtonSwitchMotors = null;
+    private EditText mDeadzoneEdit;
 
     private boolean mConnected = false;
+
+    private static final ScheduledExecutorService identifyMotorWorker =
+            Executors.newSingleThreadScheduledExecutor();
+
+    private static int queuedIDTasks = 0;
 
 
     // Code to manage Service lifecycle.
@@ -98,12 +122,11 @@ public class MotorControlActivity extends Activity {
         setContentView(R.layout.activity_motor_control);
         mView = findViewById(R.id.motor_control_layout);
         mButtonSwitchMotors = (Button)findViewById(R.id.buttonSwitchMotors);
+        mDeadzoneEdit = (EditText)findViewById(R.id.editText_DeadZone);
         setViewAndChildrenEnabled(mView, false);
 
         final Intent intent = getIntent();
-        mDeviceLeftName = intent.getStringExtra(EXTRAS_DEVICE1_NAME);
         mDeviceLeftAddress = intent.getStringExtra(EXTRAS_DEVICE1_ADDRESS);
-        mDeviceRightName = intent.getStringExtra(EXTRAS_DEVICE2_NAME);
         mDeviceRightAddress = intent.getStringExtra(EXTRAS_DEVICE2_ADDRESS);
 
         ActionBar mActionBar = getActionBar();
@@ -175,58 +198,75 @@ public class MotorControlActivity extends Activity {
         return intentFilter;
     }
 
-    private static final ScheduledExecutorService worker =
-            Executors.newSingleThreadScheduledExecutor();
-
-    private static int queuedTasks = 0;
-
+    /**
+     * Called when the user clicked the "Identify Right" button. Causes the right motor to vibrate
+     * for one second.
+     */
     public void identifyRight(View view) {
-        mBLEMotorService.writeMotor("right", 50);
-        mButtonSwitchMotors.setClickable(false);
-        // Turn the motor back off after 1 second
-        Runnable task = new Runnable() {
-            @Override
-            public void run() {
-                mBLEMotorService.writeMotor("right", 0);
-                queuedTasks -= 1;
-                checkDisabledSwitchMotorButton();
-            }
-        };
-        queuedTasks += 1;
-        worker.schedule(task, 1, TimeUnit.SECONDS);
+        pulseMotor("right", 50, 1000);
     }
 
+    /**
+     * Called when the user clicked the "Identify Left" button. Causes the left motor to vibrate for
+     * one second.
+     */
     public void identifyLeft(View view) {
-        mBLEMotorService.writeMotor("left", 50);
+        pulseMotor("left", 50, 1000);
+    }
+
+    /**
+     * Pulse a motor for a set duration
+     *
+     * @param motor: "left" or "right"
+     * @param vibrationValue: integer from 0 to 255
+     * @param time: pulse duration in milliseconds. Keep it > 50.
+     */
+    private void pulseMotor(final String motor, int vibrationValue, int time) {
+        mBLEMotorService.writeMotor(motor, vibrationValue);
         mButtonSwitchMotors.setClickable(false);
         // Turn the motor back off after 1 second
         Runnable task = new Runnable() {
             @Override
             public void run() {
-                mBLEMotorService.writeMotor("left", 0);
-                queuedTasks -= 1;
+                mBLEMotorService.writeMotor(motor, 0);
+                queuedIDTasks -= 1;
                 checkDisabledSwitchMotorButton();
             }
         };
-        queuedTasks += 1;
-        worker.schedule(task, 1, TimeUnit.SECONDS);
+        queuedIDTasks += 1;
+        identifyMotorWorker.schedule(task, time, TimeUnit.MILLISECONDS);
     }
 
+    // Check if a motor identification is still in progress.
+    // If not, then re-enable the "Switch Motors" button.
     private void checkDisabledSwitchMotorButton() {
-        if (queuedTasks <= 0) {
+        if (queuedIDTasks <= 0) {
             mButtonSwitchMotors.setClickable(true);
         }
     }
 
+    // Called when the user clicks the "Switch Motors" button.
     public void switchMotors(View view) {
         mBLEMotorService.switchMotors();
     }
 
+    // Called when the user clicks the "Start Program" button.
+    // Starts a new fullscreen web browser activity.
     public void startCalibration(View v) {
         final Intent intent = new Intent(this, Screen.class);
+        double deadzone = Double.parseDouble(mDeadzoneEdit.getText().toString());
+        intent.putExtra(EXTRAS_DEADZONE, deadzone);
         startActivity(intent);
     }
 
+    /**
+     * Enable/disable all components in a view.
+     *
+     * Code from http://stackoverflow.com/a/28509431
+     *
+     * @param view: viewgroup to change enabled state of
+     * @param enabled: new enabled status
+     */
     private static void setViewAndChildrenEnabled(View view, boolean enabled) {
         view.setEnabled(enabled);
         if (view instanceof ViewGroup) {
