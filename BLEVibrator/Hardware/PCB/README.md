@@ -10,10 +10,9 @@ I used [KiCost](https://github.com/xesscorp/KiCost) to generate a rough costing 
 
 Most of the passives are 0805, with the exception of the LiPo voltage measuring circuitry. The two resistors and one capacitor are 0603. This is purely based on the components I could source quickly and to let me try 0603 as a size.
 
-# Future Work
+# Improvements
 
-I'd like to experiment with changing the vibration motor and the battery.
+There are two minor issues with the current PCB design. 
 
-The vibration motor runs at quite a high RPM, which makes it feel quite a bit weaker when the unit is worn on top of clothes. It also has a pretty nasty 650 mA starting current. The 308-103 motor might give a stronger vibration when worn over clothes, but would require a case redesign. _[Since I ordered my 308-103 the minimum order quantity has gone up to 1k. Precision Microdrives tells me they have a new similar motor, the 308-106, coming out at the end of July 2016. It should have a minimum order quantity of 1...]_
-
-The battery is probably unnecessarily large. Running the motor at 50%, the battery lasted for about 6h30m (the motor is the most significant power draw). In real use, the vibration motor will be running at much lower than this and won't even be on all the time. As it stands the battery is a nice fit to the PCB size, but in future iterations it's a prime target for miniaturisation.
+* The footprint for soldering the motor wires is fiddly. A single hole with a long strip to solder the wire to would probably be just as secure and save a lot of assembly hassle.
+* The holes for soldering the battery wires are a __nightmare__. The wires are not very flexible so if they length is even slightly off it makes getting the whole assembly together a frustrating experience. I got rid of the JST connector because it was the tallest component and took up a lot of room. In any future design I would leave a lot more space (probably in the case) for wire management or find a lower profile connector to use instead.
