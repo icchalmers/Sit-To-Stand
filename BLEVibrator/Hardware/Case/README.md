@@ -12,6 +12,10 @@ is designed to be used directly with MakerBot Desktop with the settings I used f
 
 "Standard" quality at 0.2mm layer height works fine if you are in a hurry.
 
+## Attaching the Case
+
+The case is designed to be attached to the leg using a 25mm wide strip of hook-and-loop (i.e. Velcro). I used a piece that came with a buckle on one end and was 65cm long.
+
 ## Design Files
 
 The case was designed in Autodesk Inventor. If you need to make any changes, here's a brief description of what each file is for:
