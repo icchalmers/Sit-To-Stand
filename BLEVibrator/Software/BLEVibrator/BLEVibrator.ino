@@ -14,6 +14,8 @@
 * AUTHOR : Iain Chalmers
 *
 * START DATE : 3rd March 2016
+* 
+* UPDATED : 1st August 2016
 *
 * Copyright Iain Chalmers 2016. All rights reserved.
 *
@@ -24,10 +26,10 @@
 #include <RFduinoBLE.h>
 
 // Module variables - useful for quick changes between boards
-#define MODULE_NAME "Vib001" // Must be a max of 15 bytes long
+#define MODULE_NAME "Vib####" // Must be a max of 15 bytes long
 #define ADVERTISEMENT_INTERVAL 500 // in milliseconds
 #define TX_POWER_LEVEL 0  // -20dbM to +4 dBm. Must be a multiple of 4
-#define MINIMUM_ON_VALUE 15 // the motor used needs a value of at least 15
+#define MINIMUM_ON_VALUE 32 // the motor used needs a value of at least 32
                             // before it will turn on
 
 // Pin definitions
